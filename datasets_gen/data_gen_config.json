@@ -1,0 +1,96 @@
+{
+    "version": "v1",
+    "databases": [
+        {
+            "db_id": "tpcds_10",
+            "db_name": "indexselection_tpcds___10",
+            "db_stat_path": "./db_stats_data/indexselection_tpcds___10_stats.json",
+            "hist_file_path": "./db_stats_data/indexselection_tpcds___10_hist_file.csv"
+        },
+        {
+            "db_id": "tpcds_5",
+            "db_name": "indexselection_tpcds___5",
+            "db_stat_path": "./db_stats_data/indexselection_tpcds___5_stats.json",
+            "hist_file_path": "./db_stats_data/indexselection_tpcds___5_hist_file.csv"
+        },
+        {
+            "db_id": "tpch_10",
+            "db_name": "indexselection_tpch___10",
+            "db_stat_path": "./db_stats_data/indexselection_tpch___10_stats.json",
+            "hist_file_path": "./db_stats_data/indexselection_tpch___10_hist_file.csv"
+        },
+        {
+            "db_id": "tpch_5",
+            "db_name": "indexselection_tpch___5",
+            "db_stat_path": "./db_stats_data/indexselection_tpch___5_stats.json",
+            "hist_file_path": "./db_stats_data/indexselection_tpch___5_hist_file.csv"
+        },
+        {
+            "db_id": "imdb",
+            "db_name": "imdbload",
+            "db_stat_path": "./db_stats_data/imdbload_stats.json",
+            "hist_file_path": "./db_stats_data/imdbload_hist_file.csv"
+        }
+    ],
+    "workloads": [
+        {
+            "activated": true,
+            "workload_name": "tpcds",
+            "db_id": "tpcds_10",
+            "transfer_db_id": "tpcds_5",
+            "workload_path": "./workload/workload_tpcds.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "vary_stat", "perturb_idx", "end2end"]
+        },
+        {
+            "activated": true,
+            "workload_name": "tpcds_plus",
+            "db_id": "tpcds_10",
+            "transfer_db_id": "tpcds_5",
+            "workload_path": "./workload/workload_tpcds_plus.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "vary_stat", "perturb_idx"]
+        },
+        {
+            "activated": true,
+            "workload_name": "tpch",
+            "db_id": "tpch_10",
+            "transfer_db_id": "tpch_5",
+            "workload_path": "./workload/workload_tpch.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "vary_stat", "perturb_idx", "end2end"]
+        },
+        {
+            "activated": true,
+            "workload_name": "tpch_plus",
+            "db_id": "tpch_10",
+            "transfer_db_id": "tpch_5",
+            "workload_path": "./workload/workload_tpch_plus.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "vary_stat", "perturb_idx"]
+        },
+        {
+            "activated": true,
+            "workload_name": "imdb",
+            "db_id": "imdb",
+            "workload_path": "./workload/workload_imdb.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "perturb_idx", "end2end"]
+        },
+        {
+            "activated": true,
+            "workload_name": "imdb_plus",
+            "db_id": "imdb",
+            "workload_path": "./workload/workload_imdb_plus.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "perturb_idx"]
+        }
+    ],
+    "pretrain": {
+        "exp_id": "pretrain",
+        "workload_cfgs": [
+            {"workload_name": "baseball", "path": "./workload/baseball.pickle", "db_name": "baseball_scaled"},
+            {"workload_name": "employee", "path": "./workload/employee.pickle", "db_name": "employee_scaled"}
+        ]
+    }
+}
