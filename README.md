@@ -66,7 +66,7 @@ To train and evaluate Eddie, edit the configuration file located at `exp_configs
 ### Example Configuration (exp_configs/exp_config.json)
 The repository includes an example config at `exp_configs/exp_config.json`. Below is a simplified version with comments for reference:
 
-```json
+```
 {
     "version": "v1", // Config version for tracking changes
     "databases": [
