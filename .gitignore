@@ -173,14 +173,10 @@ cython_debug/
 
 logs/
 images/
-raw_data/
 datasets/
-checkpoint/
 checkpoints/
-pred_result/
 backup/
 workload/
 datasets_gen/data/
 datasets0/
 db_stats_data0/
-db_stats_data/

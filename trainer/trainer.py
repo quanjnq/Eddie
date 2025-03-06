@@ -148,8 +148,6 @@ def group_evaluate(model, val_dataloader, args, val_items):
     query_type2lables = {}
     query_type2preds = {}
     for i, it in enumerate(val_items):
-        # assert abs(it["label"] - val_label_list[i]) < 0.0001
-        # query_type = it["query_type"]
         query_type = it["group_num"] if "group_num" in it else it["query_type"]
         if query_type not in query_type2lables:
             query_type2lables[query_type] = []
@@ -188,8 +186,6 @@ def template_evaluate(model, val_dataloader, args, val_items):
     query_type2lables = {}
     query_type2preds = {}
     for i, it in enumerate(val_items):
-        # assert abs(it["label"] - val_label_list[i]) < 0.0001
-        # query_type = it["query_type"]
         query_type = it["query_type"] + "#" + str(it["query"].nr)
         if query_type not in query_type2lables:
             query_type2lables[query_type] = []

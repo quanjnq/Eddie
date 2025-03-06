@@ -76,6 +76,25 @@
                     "dataset_path":  "./datasets/tpcds__perturb_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
                     "skip": false
+                },
+                {
+                    "exp_id": "tpcds__end2end",
+                    "dataset_path":  "./datasets/tpcds__end2end.pickle",
+                    "run_models": ["eddie", "lib"],
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpcds__pretrain",
+                    "model_name": "eddie",
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpcds__finetune",
+                    "parent_exp_id": "tpcds__pretrain",
+                    "model_name": "eddie",
+                    "finetune_data_rate": 0.5,
+                    "use_pretrain_model": true,
+                    "skip": false
                 }
             ]
         }

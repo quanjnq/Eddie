@@ -14,7 +14,7 @@ from util.metrics_util import print_k_fold_avg_scores
 import logging
 
 
-class Args:
+class ModelArgs:
     def __init__(self):
         # training params
         self.lr = 0.001
@@ -38,7 +38,7 @@ class Args:
 def main(run_cfg):
     seed_everything(0)
     
-    args = Args()
+    args = ModelArgs()
     
     run_id = run_cfg["run_id"]
     model_name = run_cfg["model_name"]
@@ -54,17 +54,19 @@ def main(run_cfg):
     
     data_items, db_stat = data_preprocess(dataset_path, db_stat_path, args.log_label)
         
-    is_child_exp = True if 'is_child_exp' in run_cfg and run_cfg["is_child_exp"] else False
-    if is_child_exp:
+    vary_eval = False
+    if run_cfg.get('vary_dataset_path') or run_cfg.get('vary_db_stat_path') or run_cfg.get('vary_schema'):
+        vary_eval = True
         logging.info(f"is child exp, load new eval dataset")
-        logging.info(f"[new eval dataset] dataset from {run_cfg['new_dataset_path']}")
-        logging.info(f"[new eval dataset] db_stat_path from {run_cfg['new_db_stat_path']}")
+        logging.info(f"[new eval dataset] dataset from {run_cfg['vary_dataset_path']}")
+        logging.info(f"[new eval dataset] db_stat_path from {run_cfg['vary_db_stat_path']}")
         
-        new_data_items, new_db_stat = data_preprocess(run_cfg["new_dataset_path"], run_cfg["new_db_stat_path"], args.log_label,
-                                                      random_change_tbl_col=run_cfg["vary_schema"])
+        vary_data_items, vary_db_stat = data_preprocess(run_cfg["vary_dataset_path"], run_cfg["vary_db_stat_path"], args.log_label,
+                                                        random_change_tbl_col=run_cfg["vary_schema"])
         
     train_scores_list = []
     val_scores_list = []
+    vary_val_scores_list = []
 
     os.makedirs('./images', exist_ok=True)
     img_path = f'./images/{run_id}.jpg'
@@ -81,7 +83,8 @@ def main(run_cfg):
 
         os.makedirs(checkpoints_path, exist_ok=True)
         model_path = f"{checkpoints_path}/fold_{fold_i}.pth"
-        if not is_child_exp:
+        
+        if not os.path.exists(model_path):
             train_ds = LibDataset(train_items, db_stat)
             val_ds = LibDataset(val_items, db_stat)
             logging.info(f"len train data {len(train_ds)}")
@@ -98,12 +101,14 @@ def main(run_cfg):
             val_scores_list.append(val_scores)
             
             update_fold_plot(img_path, fig, axes, fold_i, train_loss_list, val_loss_list, train_label_list, train_pred_list, val_label_list, val_pred_list)
-        else:
+            
+        if vary_eval:
+            logging.info("load checkpoints and eval new dataset")
             # load checkpoints and eval new dataset
             val_keys = set([split_key_of(item) for item in val_items])
-            new_val_items = [item for item in new_data_items if split_key_of(item) in val_keys]
+            vary_val_items = [item for item in vary_data_items if split_key_of(item) in val_keys]
         
-            val_ds = LibDataset(new_val_items, db_stat)
+            val_ds = LibDataset(vary_val_items, vary_db_stat)
             logging.info(f"len val data {len(val_ds)}")
             val_dataloader = DataLoader(val_ds, batch_size=args.batch_size, collate_fn=collate_fn4lib, num_workers=16, pin_memory=True)
     
@@ -114,12 +119,14 @@ def main(run_cfg):
 
             logging.info("start infering")
             val_loss_list, val_pred_list, val_label_list, val_scores = evaluate(model, val_dataloader, args.device, args)
-            val_scores_list.append(val_scores)
+            vary_val_scores_list.append(val_scores)
         
         logging.info(f"**************************** Fold-{fold_i} End ****************************\n\n")
-        
-    print_k_fold_avg_scores(train_scores_list, val_scores_list)
     
+    if len(train_scores_list) > 0:
+        print_k_fold_avg_scores(train_scores_list, val_scores_list)
+    if len(vary_val_scores_list) > 0:
+        print_k_fold_avg_scores(train_scores_list, vary_val_scores_list)
 
 if __name__ == '__main__':
     run_cfg = {

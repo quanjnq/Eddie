@@ -12,7 +12,6 @@ from util.string_util import string_to_md5
 def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_tbl_col=False):
     with open(dataset_path, "rb") as f:
         src_data = pickle.load(f)
-        src_data = src_data[:100]
     with open(db_stat_path, "r") as f:
         db_stat = json.load(f)
         
@@ -146,7 +145,7 @@ def random_change_schema(data_items, db_stat):
         tbl, col = tbl_col.split('.')
         col_names.add(col)
     col_change_mapping = random_change_col_name(col_names, rate=0.2)
-    
+
     for item in data_items:
         plantree_str = json.dumps(item["plan_tree"])
         
@@ -159,6 +158,19 @@ def random_change_schema(data_items, db_stat):
                     
         item["plan_tree"] = json.loads(plantree_str)
     
+    # Update column names in db_stat that have been changed
+    new_db_stat = {}
+    for tbl_col, stat in db_stat.items():
+        tbl, col = tbl_col.split('.')
+        if col in col_change_mapping:
+            new_col = col_change_mapping[col]
+            new_tbl_col = f"{tbl}.{new_col}"
+            new_db_stat[new_tbl_col] = stat
+        else:
+            new_db_stat[tbl_col] = stat
+    db_stat.clear()
+    db_stat.update(new_db_stat)
+
     return data_items
 
 

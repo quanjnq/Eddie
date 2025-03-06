@@ -54,16 +54,17 @@ def main(run_cfg):
     
     data_items, db_stat = data_preprocess(dataset_path, db_stat_path)
         
-    is_child_exp = True if 'is_child_exp' in run_cfg and run_cfg["is_child_exp"] else False
-    if is_child_exp:
+    vary_eval = False
+    if run_cfg.get('vary_dataset_path') or run_cfg.get('vary_db_stat_path') or run_cfg.get('vary_schema'):
+        vary_eval = True
         logging.info(f"is child exp, load new eval dataset")
-        logging.info(f"[new eval dataset] dataset from {run_cfg['new_dataset_path']}")
-        logging.info(f"[new eval dataset] db_stat_path from {run_cfg['new_db_stat_path']}")
+        logging.info(f"[new eval dataset] dataset from {run_cfg['vary_dataset_path']}")
+        logging.info(f"[new eval dataset] db_stat_path from {run_cfg['vary_db_stat_path']}")
         
-        new_data_items, new_db_stat = data_preprocess(run_cfg["new_dataset_path"], run_cfg["new_db_stat_path"],
+        vary_data_items, vary_db_stat = data_preprocess(run_cfg["vary_dataset_path"], run_cfg["vary_db_stat_path"],
                                                       random_change_tbl_col=run_cfg["vary_schema"])
     
-    database_name = run_cfg["new_db_name"] if 'new_db_name' in run_cfg else run_cfg["db_name"]
+    database_name = run_cfg["vary_db_name"] if 'vary_db_name' in run_cfg else run_cfg["db_name"]
     logging.info(f"using database_name {database_name}")
     try:
         db_connector = PostgresDatabaseConnector(database_name, True)
@@ -114,13 +115,12 @@ def main(run_cfg):
     
 
 if __name__ == '__main__':
-    
-    dataset_path = "/home/seven/src/index/index_selection_evaluation/data/samples/workload_tpcds5_390_queries_autoadmin_5284_extend_1668_autoadmin5284_sqi0_add_init_ind_30302.pickle"
-    dbname = "indexselection_tpcds___5"
-    
-    
-    exp_cfg = {}
-    exp_cfg["dataset_path"] = dataset_path
-    exp_cfg["method_name"] = "pg_what_if"
-    exp_cfg["db_name"] = dbname
-    main(exp_cfg)
+    run_cfg = {
+        'run_id': 'tpcds__base_w_init_idx__postgresql_v1', 
+        'model_name': 'postgresql', 
+        'workload_name': 'tpcds', 
+        'dataset_path': './datasets/tpcds__base_w_init_idx.pickle', 
+        'db_stat_path': './db_stats_data/indexselection_tpcds___10_stats.json', 
+        'db_name': 'indexselection_tpcds___10'
+    }
+    main(run_cfg)
