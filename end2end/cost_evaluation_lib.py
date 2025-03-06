@@ -1,59 +1,13 @@
-import os
-import sys
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-import json
-import pickle
 from torch.utils.data import DataLoader
 
 from lib_est.lib_model import *
 from lib_est.lib_dataset import *
 from data_process.data_process import *
 from trainer.trainer import *
-from util.draw_util import *
 from util.log_util import *
-from util.random_util import seed_everything
 
-import logging
-import logging
-from run_lib import Args
+from run_lib import ModelArgs
 from selection.what_if_index_creation import WhatIfIndexCreation
-
-
-
-def infer(data_item, db_stat, model):
-    args = Args()
-    val_ds = LibDataset([data_item], db_stat)
-    val_dataloader = DataLoader(val_ds, batch_size=args.batch_size, collate_fn=collate_fn4lib, num_workers=0, pin_memory=True)
-    
-    # lib model
-    model.to(args.device)
-    
-    model.eval()
-    val_pred_list = []
-    val_label_list = []
-    with torch.no_grad():
-        for batch in val_dataloader:
-            features, label = get_batch_data_to_device(batch, args.device)
-            
-            val_preds = model(features)
-            val_preds = val_preds.squeeze()
-
-            val_pred_list.extend(val_preds.cpu().detach().numpy().flatten().tolist())
-            val_label_list.extend(label.cpu().detach().numpy().flatten().tolist())
-            
-    return val_preds.cpu().detach().numpy().flatten().tolist()[0]
-
-
-def get_benefit(orig_plan, index_config, db_stat, model):
-    data_item = {"indexes": index_config, "plan_tree": orig_plan, "label": 0}
-    
-    benefit = infer(data_item, db_stat, model)
-    
-    return benefit
-
-
 
 class CostEvaluation:
     def __init__(self, db_connector, cost_estimation="whatif", db_stat=None, model=None, sql2plan_tree=None):
@@ -74,8 +28,6 @@ class CostEvaluation:
         self.sql2plan_tree = sql2plan_tree if sql2plan_tree else {}
 
     def estimate_size(self, index):
-        # TODO: Refactor: It is currently too complicated to compute
-        # We must search in current indexes to get an index object with .hypopg_oid
         result = None
         for i in self.current_indexes:
             if index == i:
@@ -169,10 +121,9 @@ class CostEvaluation:
         if len(ind_cfg) == 0:
             return cost
         try:
-            benefit = get_benefit(plan, ind_cfg, self.db_stat, self.model)
+            benefit = self.get_benefit(plan, ind_cfg, self.db_stat, self.model)
         except Exception as e:
             benefit = 0
-            logging.info(f"get_benefit except: {e}")
         pred_cost = (1 - benefit) * cost # cost restore
         return pred_cost
 
@@ -208,3 +159,37 @@ class CostEvaluation:
             x for x in indexes if any(c in query.columns for c in x.columns)
         ]
         return frozenset(relevant_indexes)
+    
+    @staticmethod
+    def infer(data_item, db_stat, model):
+        args = Args()
+        val_ds = LibDataset([data_item], db_stat)
+        val_dataloader = DataLoader(val_ds, batch_size=args.batch_size, collate_fn=collate_fn4lib, num_workers=0, pin_memory=True)
+        
+        # lib model
+        model.to(args.device)
+        
+        model.eval()
+        val_pred_list = []
+        val_label_list = []
+        with torch.no_grad():
+            for batch in val_dataloader:
+                features, label = get_batch_data_to_device(batch, args.device)
+                
+                val_preds = model(features)
+                val_preds = val_preds.squeeze()
+
+                val_pred_list.extend(val_preds.cpu().detach().numpy().flatten().tolist())
+                val_label_list.extend(label.cpu().detach().numpy().flatten().tolist())
+                
+        val_pred = val_preds.cpu().detach().numpy().flatten().tolist()[0]
+        if args.log_label:
+            return min(math.pow(math.e, val_pred) - 1, 1.0)
+        else:
+            return val_pred
+
+
+    def get_benefit(self, orig_plan, index_config, db_stat, model):
+        data_item = {"indexes": index_config, "plan_tree": orig_plan, "label": 0}
+        benefit = self.infer(data_item, db_stat, model)
+        return benefit

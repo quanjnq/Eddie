@@ -1,14 +1,10 @@
-import logging
-
 from selection.what_if_index_creation import WhatIfIndexCreation
 
 
 class CostEvaluation:
     def __init__(self, db_connector, cost_estimation="whatif"):
-        # logging.debug("Init cost evaluation")
         self.db_connector = db_connector
         self.cost_estimation = cost_estimation
-        # logging.info("Cost estimation with " + self.cost_estimation)
         self.what_if = WhatIfIndexCreation(db_connector)
         self.current_indexes = set()
         self.cost_requests = 0
@@ -24,8 +20,6 @@ class CostEvaluation:
         self.invoke_cnt = 0
 
     def estimate_size(self, index):
-        # TODO: Refactor: It is currently too complicated to compute
-        # We must search in current indexes to get an index object with .hypopg_oid
         result = None
         for i in self.current_indexes:
             if index == i:
