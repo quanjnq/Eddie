@@ -14,6 +14,13 @@ $ pip install -r requirements.txt
 ```
 In addition, you need to set up a PostgresSQL server (version 12.13 is preferred) along with the [HypoPG](https://github.com/HypoPG/hypopg) extension (version 1.3.1 is preferred).
 
+**Cloning the Repository**
+
+This project includes several submodules, which are necessary for running experiments. After cloning the repository, make sure to initialize and update the submodules by running:
+```
+$ git submodule update --init --recursive
+```
+
 ## Prepare Datasets
 Eddie requires specific datasets for training and evaluation. You have two options to prepare the datasets:
 
@@ -97,7 +104,7 @@ Eddie can be trained and evaluated using two methods:
 2. **Command-line Execution:** Use `run_eddie.py` with specified parameters for flexible experiment execution.
 
 ### Method 1: Configuration-based Execution
-For a flexible approach, you can run Eddie by specifying parameters directly via command-line scripts. Depending on the experiment type, different scripts and steps apply. Below are the details for general experiments, pre-training experiments, and end-to-end experiments.
+This method allows you to run experiments using predefined configuration files. Simply specify the configuration file, and the script will automatically load the necessary parameters.
 
 1. **Edit Configuration:**
 
@@ -241,7 +248,7 @@ After execution, metrics and logs for each model are saved in the `./logs` direc
 
 #### Pre-training Experiment
 **Step 1: Customize Training Parameters**
-Before the experiment, you can customize the training parameters in the file `pretrain_finetune/pretrain_finetuneconfig. py`, and the default parameters are the ones used in the paper
+Before the experiment, you can customize the training parameters in the file `pretrain_finetune/pretrain_finetuneconfig.py`, and the default parameters are the ones used in the paper
 
 **Step 2: Pre-train the Model**
 ```sh
