@@ -71,14 +71,17 @@ def vary_query(query_text, tbl_names, db_connector, db_stat, use_alise):
                 pass
 
 
-def gen_vary_query_workload(w_path, stat_path, database_name, workload_name):
+def gen_vary_query_workload(w_path, stat_path, database_name, workload_name, conn_cfg=None):
     random.seed(0)
     use_alise = True if workload_name == "imdb" else False
     with open(stat_path, "r") as f:
         db_stat = json.load(f)
         
     tbl_names = sorted(list(set([tbl_col.split(".")[0] for tbl_col in db_stat])))
-    db_connector = PostgresDatabaseConnector(database_name, autocommit=True)
+    if conn_cfg:
+        db_connector = PostgresDatabaseConnector(database_name, host=conn_cfg["host"],  port=conn_cfg["port"],  user=conn_cfg["user"], password=conn_cfg["password"], autocommit=True)
+    else:
+        db_connector = PostgresDatabaseConnector(database_name, autocommit=True)
 
     with open(w_path, "rb") as f:
         w = pickle.load(f)

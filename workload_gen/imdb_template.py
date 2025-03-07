@@ -66,9 +66,12 @@ def paramize(sql_text, db_stat):
 
 
 
-def paramize_imdb(imdb_nr_sqls_tuples, database_name, db_stat, times= 3):
+def paramize_imdb(imdb_nr_sqls_tuples, database_name, db_stat, times= 3, conn_cfg=None):
     random.seed(0)
-    db_connector = PostgresDatabaseConnector(database_name, autocommit=True)
+    if conn_cfg:
+        db_connector = PostgresDatabaseConnector(database_name, host=conn_cfg["host"],  port=conn_cfg["port"],  user=conn_cfg["user"], password=conn_cfg["password"], autocommit=True)
+    else:
+        db_connector = PostgresDatabaseConnector(database_name, autocommit=True)
     qs = []
 
     for nr, sql in imdb_nr_sqls_tuples:

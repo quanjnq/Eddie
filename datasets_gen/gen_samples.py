@@ -155,8 +155,12 @@ def main(run_params):
     database_name = run_params["db_name"]
     path = run_params["query_indcfgs_path"]
     common_name = path.split("/")[-1].split(".")[0]
-
-    db_connector = PostgresDatabaseConnector(database_name, autocommit=True)
+    
+    if "conn_cfg" in run_params:
+        conn_cfg = run_params["conn_cfg"]
+        db_connector = PostgresDatabaseConnector(database_name, host=conn_cfg["host"],  port=conn_cfg["port"],  user=conn_cfg["user"], password=conn_cfg["password"], autocommit=True)
+    else:
+        db_connector = PostgresDatabaseConnector(database_name, autocommit=True)
 
     saved_sample_path_dict = {}
     save_dir_path = data_gen_work_dir + "samples/"

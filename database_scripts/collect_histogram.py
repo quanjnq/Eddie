@@ -5,7 +5,7 @@ import numpy as np
 import psycopg2
 import time
 from util.const_util import db_stats_save_path
-
+import argparse
 
 def to_vals(data_list):
     for dat in data_list:
@@ -25,7 +25,7 @@ def to_vals(data_list):
         return np.array(res)
     
     
-def main(db_name, db_stat_path):
+def main(db_name, db_stat_path, conn_cfg=None):
     schema = {}
     col2id = {}
     with open(db_stat_path, "r")  as f:
@@ -38,7 +38,10 @@ def main(db_name, db_stat_path):
             schema[tbl] = []
         schema[tbl].append(col)
     st = time.time()
-    conm = psycopg2.connect(database=db_name)
+    if conn_cfg:
+        conm = psycopg2.connect(database=db_name, host=conn_cfg["host"], port=conn_cfg["port"], user=conn_cfg["user"], password=conn_cfg["password"])
+    else:
+        conm = psycopg2.connect(database=db_name, )
     conm.set_session(autocommit=True)
     cur = conm.cursor()
     
@@ -70,6 +73,15 @@ def main(db_name, db_stat_path):
     print(f"time cost: {time.time() - st} s")
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Run Eddie model training and evaluation')
+    # Optional arguments
+    parser.add_argument('--host', type=str, help='The host address used for the connection')
+    parser.add_argument('--port', type=str, help='The port used for the connection')
+    parser.add_argument('--user', type=str, help='The username used for the connection')
+    parser.add_argument('--password', type=str, help='The password used for the connection')
+    
+    args = parser.parse_args()
+    conn_cfg = vars(args)  # Convert args directly to dictionary
     
     params = [
         # (db_name, db_stats_data)
@@ -78,4 +90,13 @@ if __name__ == '__main__':
         ("imdbload", './db_stats_data/imdbload_stats.json'),
         ]
     for param in params:
-        main(param[0], param[1])
+        main(param[0], param[1], conn_cfg)
+        
+    
+''' example
+python database_scripts/collect_histogram.py \
+    --host localhost \
+    --port 54321 \
+    --user postgres \
+    --password your_password
+'''

@@ -8,6 +8,7 @@ import logging
 import sys
 import psycopg2
 from util.const_util import db_stats_save_path
+import argparse
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG,
                     format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
@@ -76,21 +77,44 @@ def main_stats(save_path):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Run Eddie model training and evaluation')
+    # Optional arguments
+    parser.add_argument('--host', type=str, help='The host address used for the connection')
+    parser.add_argument('--port', type=str, help='The port used for the connection')
+    parser.add_argument('--user', type=str, help='The username used for the connection')
+    parser.add_argument('--password', type=str, help='The password used for the connection')
+    parser.add_argument('--database_name', type=str, help='The database name used for the connection.')
+    
+    args = parser.parse_args()
+    conn_cfg = vars(args)  # Convert args directly to dictionary
+    
     db_names = ["indexselection_tpcds___10", "indexselection_tpch___10", "imdbload"]
-    for database_name in db_names:
-        
-        conn = psycopg2.connect( database=database_name )
-        conn.autocommit = True
-        cursor = conn.cursor()
+    database_name = db_names[0]
+    if conn_cfg:
+        conn = psycopg2.connect(database=conn_cfg["database_name"], host=conn_cfg["host"], port=conn_cfg["port"], user=conn_cfg["user"], password=conn_cfg["password"])
+    else:
+        conn = psycopg2.connect(database=database_name, )
+    conn.autocommit = True
+    cursor = conn.cursor()
 
-        print(f"collect db stats {database_name} start")
-        file_path = db_stats_save_path + f"{database_name}_stats.json"
+    print(f"collect db stats {database_name} start")
+    file_path = db_stats_save_path + f"{database_name}_stats.json"
+    
+    dst_dir = os.path.dirname(file_path)
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
         
-        dst_dir = os.path.dirname(file_path)
-        if not os.path.exists(dst_dir):
-            os.makedirs(dst_dir)
-            
-        main_stats(file_path)
-        print(f"collect db stats {database_name} finished")
-        print(f"Saved db_stats to: {file_path}")
+    main_stats(file_path)
+    print(f"collect db stats {database_name} finished")
+    print(f"Saved db_stats to: {file_path}")
+    conn.close()
+        
 
+''' example
+python database_scripts/collect_db_stats.py \
+    --host localhost \
+    --port 54321 \
+    --user postgres \
+    --password your_password \
+    --database_name indexselection_tpcds___10
+'''

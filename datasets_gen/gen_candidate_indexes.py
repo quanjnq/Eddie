@@ -92,7 +92,11 @@ def main(run_params):
     logging.info(f"Run run_gen_query_indexes seed {seed} param: {run_params}")
     db_name = run_params["db_name"]
     workload_path = run_params["workload_path"]
-    db_connector = PostgresDatabaseConnector(db_name)
+    if "conn_cfg" in run_params:
+        conn_cfg = run_params["conn_cfg"]
+        db_connector = PostgresDatabaseConnector(db_name, host=conn_cfg["host"],  port=conn_cfg["port"],  user=conn_cfg["user"], password=conn_cfg["password"])
+    else:
+        db_connector = PostgresDatabaseConnector(db_name)
     db_connector.drop_indexes()
     db_connector.commit()
 

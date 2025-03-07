@@ -56,7 +56,7 @@ def main(run_cfg):
     
     data_items, db_stat = data_preprocess(dataset_path, db_stat_path, model_args.log_label)
     data_items = eddie_feat_data(data_items, db_stat)
-        
+    
     vary_eval = False
     if run_cfg.get('vary_dataset_path') or run_cfg.get('vary_db_stat_path') or run_cfg.get('vary_schema'):
         vary_eval = True

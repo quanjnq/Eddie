@@ -162,7 +162,7 @@ class CostEvaluation:
     
     @staticmethod
     def infer(data_item, db_stat, model):
-        args = Args()
+        args = ModelArgs()
         val_ds = LibDataset([data_item], db_stat)
         val_dataloader = DataLoader(val_ds, batch_size=args.batch_size, collate_fn=collate_fn4lib, num_workers=0, pin_memory=True)
         

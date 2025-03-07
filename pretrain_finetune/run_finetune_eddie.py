@@ -111,7 +111,7 @@ if __name__ == '__main__':
     
     # Optional arguments
     parser.add_argument('--pretrain_model_path', type=str, help='Used to find pre-trained model that have been saved. Parameters used for initializing fine-tuning model')
-    parser.add_argument('--finetune_data_rate', type=str, default="0.5", help='Fine tune the target data ratio of the model, with a value range of 0-1')
+    parser.add_argument('--finetune_data_rate', type=str, default="0.5", help='Fine-tune the target data ratio of the model, with a value range of 0-1')
     
     args = parser.parse_args()
     cfg = vars(args)  # Convert args directly to dictionary

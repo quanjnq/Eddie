@@ -47,10 +47,23 @@ class WorkloadArgs:
 
         common_query_conf = {"col_backlist":[], "tbl_backlist": [], "min_orderby_cols": 1, "max_orderby_cols": 3, "min_groupby_cols": 1, "max_groupby_cols": 3, "max_selectable_cols": 3, "where_max_predicate_num": 3}
         
-        user = "postgres"
-        password = parse.quote_plus("M6#P@+dyzTB+tQiV")
-        port = 54321
-        host = "localhost"
+        if "conn_cfg" in run_params:
+            conn_cfg = run_params["conn_cfg"]
+            user = conn_cfg["user"]
+            password = parse.quote_plus(conn_cfg["password"])
+            port = conn_cfg["port"]
+            host = conn_cfg["host"]
+        else:
+            user = "postgres"
+            password = parse.quote_plus("M6#P@+dyzTB+tQiV")
+            port = 54321
+            host = "localhost"
+            
+        self.user = user
+        self.password = password
+        self.port = port
+        self.host = host
+        
         
         dbname = run_params["dbname"]
         workload_name = run_params["workload_name"]
@@ -83,8 +96,8 @@ def gen_query_list(query_prob_conf, common_query_conf, join_keys, db_connector, 
     return queries
 
 
-def get_db_conn_with_no_index(dbname):
-    db_connector = PostgresDatabaseConnector(dbname, autocommit=True)
+def get_db_conn_with_no_index(w_args: WorkloadArgs):
+    db_connector = PostgresDatabaseConnector(w_args.dbname, autocommit=True, host=w_args.host, port=w_args.port, user=w_args.user, password=w_args.password)
     db_connector.drop_indexes()
     db_connector.commit()
     return db_connector
@@ -162,7 +175,7 @@ def get_params_by_workload_name(workload_name):
 def main(run_params):
     logging.info(f"Use run_params: {run_params}")
     w_args = WorkloadArgs(run_params)
-    db_connector = get_db_conn_with_no_index(w_args.dbname)
+    db_connector = get_db_conn_with_no_index(w_args)
     
     workload_file_path = gen_ext_workload(db_connector, w_args)
     
