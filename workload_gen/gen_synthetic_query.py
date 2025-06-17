@@ -54,10 +54,7 @@ class WorkloadArgs:
             port = conn_cfg["port"]
             host = conn_cfg["host"]
         else:
-            user = "postgres"
-            password = parse.quote_plus("M6#P@+dyzTB+tQiV")
-            port = 54321
-            host = "localhost"
+            raise Exception("conn_cfg is required")
             
         self.user = user
         self.password = password
@@ -114,6 +111,13 @@ def save_synthetic_querys(queries, filepath_no_suffix, conn):
     with open(json_path, "w") as f:
         json.dump(queries, f)
         logging.info(f"saved synthetic queries text to {json_path}")
+    
+    txt_path = "./synthetic_queries/" + filepath_no_suffix.split("/")[-1] + ".txt"
+    with open(txt_path, "w") as f:
+        for query in workload.queries:
+            f.write(f"Q{query.nr}\t{query.text}\n")
+    logging.info(f"saved synthetic queries text to {txt_path}")
+
     return pickle_path
 
 

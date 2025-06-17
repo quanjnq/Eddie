@@ -17,7 +17,7 @@ def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_t
         
     res_data = []
     
-    for sample in src_data:
+    for si, sample in enumerate(src_data):
         query = sample[0]
         init_index_comb, index_comb = sample[1]
         orig_times, orig_plan = sample[2]
@@ -49,6 +49,7 @@ def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_t
         
         data_item = {
             "sql": sql,
+            "sample_id": si,
             "plan_tree": orig_plan,
             "with_index_plan": with_index_plan,
             "orig_plan": orig_plan,

@@ -88,11 +88,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     conn_cfg = vars(args)  # Convert args directly to dictionary
     
-    db_names = ["indexselection_tpcds___10", "indexselection_tpch___10", "imdbload"]
-    database_name = db_names[0]
     if conn_cfg:
+        database_name = conn_cfg["database_name"]
         conn = psycopg2.connect(database=conn_cfg["database_name"], host=conn_cfg["host"], port=conn_cfg["port"], user=conn_cfg["user"], password=conn_cfg["password"])
     else:
+        db_names = ["indexselection_tpcds___10", "indexselection_tpch___10", "imdbload"]
+        database_name = db_names[0]
         conn = psycopg2.connect(database=database_name, )
     conn.autocommit = True
     cursor = conn.cursor()
