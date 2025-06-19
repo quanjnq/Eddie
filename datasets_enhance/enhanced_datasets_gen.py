@@ -24,7 +24,6 @@ random_util.seed_everything(0)
 AUTO_ADMIN = "AutoAdmin"
 
 def get_avg_runtimes(query, timeout=120*1000, db_connector=None):
-    # 参照LIB，执行1次，去掉第一次再取平均
     each_times = []    
     times = 4
     for k in range(times): 
@@ -33,7 +32,6 @@ def get_avg_runtimes(query, timeout=120*1000, db_connector=None):
             return None, None
         each_times.append(actual_runtimes)
         
-    # each_times.remove(max(each_times))
     if times > 1:
         avg_times = sum(each_times[1:]) / len(each_times[1:])
     else:
@@ -48,9 +46,6 @@ def clear_all_indexes(db_connector):
     indexes = db_connector.exec_fetch(stmt, one=False)
     for index in indexes:
         index_name = index[0]
-        # if "pkey" in index_name:
-        #     logging.info("pass pkey")
-        #     continue
         drop_stmt = "drop index {}".format(index_name)
         db_connector.exec_only(drop_stmt)
         db_connector.commit()
@@ -114,7 +109,6 @@ def get_workload_runtime(workload, db_connector):
     sql2plan = {}
     print()
     for i, query in enumerate(workload.queries):
-        # query2exectime[item["query"]] = item["orig_times"]
         query_orig_time,plan = get_avg_runtimes(query,db_connector=db_connector)
         sql2plan[query.text] = (query_orig_time, plan)
         query2runtime[query] = query_orig_time
