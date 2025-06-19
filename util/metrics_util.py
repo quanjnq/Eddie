@@ -16,8 +16,8 @@ def calc_qerror(preds, labels):
     }
     qerror = []
     for i in range(len(preds)):
-        pred = preds[i]
-        label = labels[i]
+        pred = max(preds[i], 0)
+        label = max(labels[i], 0)
         qerror.append(max((pred + 1e-4) / (label + 1e-4), (label + 1e-4) / (pred + 1e-4)))
         
     e_50, e_90, e_95 = np.median(qerror), np.percentile(qerror, 90), np.percentile(qerror, 95)

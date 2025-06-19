@@ -9,7 +9,7 @@ import copy
 from util.string_util import string_to_md5
 
 
-def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_tbl_col=False):
+def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_tbl_col=False, clip_label=True):
     with open(dataset_path, "rb") as f:
         src_data = pickle.load(f)
     with open(db_stat_path, "r") as f:
@@ -35,7 +35,9 @@ def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_t
             label = (orig_times - with_index_runtimes) / orig_times
         else:
             label = 0
-        if log_label:
+        if clip_label:
+            label = max(label, 0)
+        if log_label and clip_label:
             label = math.log(1 + label)
             
         sql = query.text

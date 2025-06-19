@@ -47,6 +47,7 @@ def main(run_cfg):
     dataset_path = run_cfg["dataset_path"]
     db_stat_path = run_cfg["db_stat_path"]
     checkpoints_path = run_cfg["checkpoints_path"]
+    clip_label = run_cfg["clip_label"] == "True"
 
     setup_logging(run_id)
     logging.info(f"using run_id: {run_id}, model_name: {model_name}")
@@ -54,7 +55,7 @@ def main(run_cfg):
     logging.info(f"loading db_stat_path from {db_stat_path}")
     logging.info(f"checkpoints_path: {checkpoints_path}")
     
-    data_items, db_stat = data_preprocess(dataset_path, db_stat_path, model_args.log_label)
+    data_items, db_stat = data_preprocess(dataset_path, db_stat_path, model_args.log_label, clip_label=clip_label)
     data_items = eddie_feat_data(data_items, db_stat)
     
     vary_eval = False
@@ -65,7 +66,7 @@ def main(run_cfg):
         logging.info(f"[new eval dataset] db_stat_path from {run_cfg['vary_db_stat_path']}")
         
         vary_data_items, vary_db_stat = data_preprocess(run_cfg["vary_dataset_path"], run_cfg["vary_db_stat_path"], model_args.log_label,
-                                                      random_change_tbl_col=run_cfg["vary_schema"])
+                                                      random_change_tbl_col=run_cfg["vary_schema"], clip_label=clip_label)
         vary_data_items = eddie_feat_data(vary_data_items, vary_db_stat)
         
     train_scores_list = []
@@ -82,7 +83,7 @@ def main(run_cfg):
         logging.info(f"**************************** Fold-{fold_i} Start ****************************")
         
         model = Eddie(max_sort_col_num=model_args.max_sort_col_num, max_output_col_num=model_args.max_output_col_num, max_predicate_num=model_args.max_predicate_num, \
-                            disable_idx_attn=model_args.disable_idx_attn)
+                            disable_idx_attn=model_args.disable_idx_attn, clip_label=clip_label)
 
         os.makedirs(checkpoints_path, exist_ok=True)
         model_path = f"{checkpoints_path}/fold_{fold_i}.pth"
@@ -147,6 +148,7 @@ if __name__ == '__main__':
     parser.add_argument('--vary_dataset_path', type=str, help='Path to a dataset for testing drift scenarios (e.g., changes in queries or data statistics)')
     parser.add_argument('--vary_db_stat_path', type=str, help='Path to alternative database statistics, used when data statistics change in drift scenarios.')
     parser.add_argument('--vary_schema', type=bool, default=False, help='Whether to vary the schema of the dataset.')
+    parser.add_argument('--clip_label', type=str, default="True", help='Whether to limit the training label interval to 0 - 1. True or False')
     
     args = parser.parse_args()
     run_cfg = vars(args)  # Convert args directly to dictionary

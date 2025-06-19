@@ -270,7 +270,30 @@ After execution, metrics and logs will be stored in the `./logs` directory, with
 
 #### End-to-End Experiment
 
-**Step 1: Train the Model**
+**Step 1: Dataset enhancements**
+This step is to enhance the end-to-end training dataset, using `./datasets_enhance/enhanced_datasets_gen.py` to train the model for the end-to-end pipeline.
+
+```sh
+$ python datasets_enhance/enhanced_datasets_gen.py \
+    --database_name indexselection_tpcds___10 \
+    --host localhost \
+    --port 54321 \
+    --user postgres \
+    --password your_password
+    --enhanced_dataset_path ./datasets/tpcds__end2end.pickle
+```
+
+Available parameters:
+- enhanced_dataset_path (required): The path of the dataset that will be enhanced. (e.g., "./datasets/tpcds__end2end.pickle").
+- database_name (required): Name of the PostgreSQL database (e.g., "indexselection_tpcds__10").
+- host: The host address used for the connection.
+- port: The port used for the connection.
+- user: The username used for the connection.
+- password: The password used for the connection.
+
+The enhanced training data is generated for the next training.
+
+**Step 2: Train the Model**
 This step is identical to the **General Experiment**, using `run_eddie.py` to train the model for the end-to-end pipeline.
 
 ```sh
@@ -280,10 +303,11 @@ $ python run_eddie.py \
     --dataset_path ./datasets/tpcds__end2end.pickle \
     --db_stat_path ./db_stats_data/indexselection_tpcds___10_stats.json \
     --checkpoints_path ./checkpoints/tpcds__end2end__eddie_v1
+    --clip_label False
 ```
 The generated checkpoints will be used in the next step.
 
-**Step 2: Run End-to-End Evaluation**
+**Step 3: Run End-to-End Evaluation**
 After training, perform end-to-end evaluation with `run_end2end.py`. This script supports evaluating multiple models by specifying them in `--run_models`.
 
 ```sh

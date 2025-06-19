@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class Prediction(nn.Module):
-    def __init__(self, in_feature = 128, hid_units = 128, contract = 1, mid_layers = True, res_con = True):
+    def __init__(self, in_feature = 128, hid_units = 128, contract = 1, mid_layers = True, res_con = True, clip_label=True):
         super(Prediction, self).__init__()
         self.mid_layers = mid_layers
         self.res_con = res_con
@@ -15,6 +15,8 @@ class Prediction(nn.Module):
         self.mid_mlp2 = nn.Linear(hid_units//contract, hid_units)
 
         self.out_mlp2 = nn.Linear(hid_units, 1)
+        
+        self.clip_label = clip_label
 
     def forward(self, features):
         
@@ -26,7 +28,7 @@ class Prediction(nn.Module):
                 hid = hid + mid
             else:
                 hid = mid
-        out = torch.sigmoid(self.out_mlp2(hid))
+        out = torch.sigmoid(self.out_mlp2(hid)) if self.clip_label else self.out_mlp2(hid)
 
         return out
 
@@ -292,7 +294,8 @@ class Eddie(nn.Module):
                  pred_hid=128, hidden_dim=128, \
                  max_sort_col_num=5, max_output_col_num=5, max_predicate_num=120, \
                  predicate_types=['filter', 'join', 'index_cond'],
-                 disable_idx_attn=False
+                 disable_idx_attn=False,
+                 clip_label = True
                  ):
 
         super(Eddie, self).__init__()
@@ -344,7 +347,7 @@ class Eddie(nn.Module):
         for predicate_type in predicate_types:
             self.predicate_attn_layers[predicate_type] = TreeBiasAttention(n_layers=4)
 
-        self.pred = Prediction(hidden_dim, pred_hid)
+        self.pred = Prediction(hidden_dim, pred_hid, clip_label=clip_label)
         
     def forward(self, features):
         n_batch, n_index, n_node = features['operator'].size()
