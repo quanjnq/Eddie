@@ -1,6 +1,6 @@
 # Eddie
 
-This repository provides code for Eddie: Accurate and Robust Index Benefit Estimation Through Hierarchical and Two-dimensional Feature Representation.
+This repository provides code for Robust Index Benefit Estimation Through Hierarchical and Two-dimensional Feature Representation.
 
 
 ##  Environment
