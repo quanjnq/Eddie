@@ -28,3 +28,10 @@ auto_admin_parameters = {
     "max_indexes_naive": 1,
     "max_index_width": 2
 }
+
+# ablation feature
+WO_STAT = "WO_STAT"
+WO_ROWS = "WO_ROWS"
+WO_PREDICATE = "WO_PREDICATE"
+WO_OUTPUT_COL = "WO_OUTPUT_COL"
+WO_HIST = "WO_HIST"

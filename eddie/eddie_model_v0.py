@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import util.const_util as const
-
 
 
 class Prediction(nn.Module):
@@ -297,8 +295,7 @@ class Eddie(nn.Module):
                  max_sort_col_num=5, max_output_col_num=5, max_predicate_num=120, \
                  predicate_types=['filter', 'join', 'index_cond'],
                  disable_idx_attn=False,
-                 clip_label = True,
-                 ablation_feat = ""
+                 clip_label = True
                  ):
 
         super(Eddie, self).__init__()
@@ -351,7 +348,6 @@ class Eddie(nn.Module):
             self.predicate_attn_layers[predicate_type] = TreeBiasAttention(n_layers=4)
 
         self.pred = Prediction(hidden_dim, pred_hid, clip_label=clip_label)
-        self.ablation_feat = ablation_feat
         
     def forward(self, features):
         n_batch, n_index, n_node = features['operator'].size()
@@ -373,20 +369,14 @@ class Eddie(nn.Module):
                 predicate_left_col_type_embedded = self.col_type_embedding(features[f'{pt}_left_col_type'])
                 # predicate_left_col_stat_embedded = self.col_stat_project(torch.stack([features[f'{pt}_left_col_dist_cnt'], features[f'{pt}_left_col_dist_frac'], features[f'{pt}_left_col_null_frac']], dim=-1))
                 predicate_left_col_stat_embedded = self.col_stat_project(torch.stack([features[f'{pt}_left_col_dist_frac'], features[f'{pt}_left_col_null_frac']], dim=-1))
-                if const.WO_STAT == self.ablation_feat:
-                    predicate_left_col_embedded = predicate_left_col_pos_embedded
-                else:
-                    predicate_left_col_embedded = predicate_left_col_pos_embedded + predicate_left_col_type_embedded + predicate_left_col_stat_embedded
+                predicate_left_col_embedded = predicate_left_col_pos_embedded + predicate_left_col_type_embedded + predicate_left_col_stat_embedded
                 
                 # predicate right col embedding
                 predicate_right_col_pos_embedded = self.col_pos_embedding(features[f'{pt}_right_col_pos'])
                 predicate_right_col_type_embedded = self.col_type_embedding(features[f'{pt}_right_col_type'])
                 # predicate_right_col_stat_embedded = self.col_stat_project(torch.stack([features[f'{pt}_right_col_dist_cnt'], features[f'{pt}_right_col_dist_frac'], features[f'{pt}_right_col_null_frac']], dim=-1))
                 predicate_right_col_stat_embedded = self.col_stat_project(torch.stack([features[f'{pt}_right_col_dist_frac'], features[f'{pt}_right_col_null_frac']], dim=-1))
-                if const.WO_STAT == self.ablation_feat:
-                    predicate_right_col_embedded = predicate_right_col_pos_embedded
-                else:
-                    predicate_right_col_embedded = predicate_right_col_pos_embedded + predicate_right_col_type_embedded + predicate_right_col_stat_embedded
+                predicate_right_col_embedded = predicate_right_col_pos_embedded + predicate_right_col_type_embedded + predicate_right_col_stat_embedded
                 
                 predicate_combined_embedded = torch.cat([
                     predicate_left_col_embedded,
@@ -415,20 +405,14 @@ class Eddie(nn.Module):
         sort_col_type_embedded = self.col_type_embedding(features['sort_col_type']) # [n_batch, n_index, n_node, n_sort_col, emb_dim]
         # sort_col_stat_embedded = self.col_stat_project(torch.stack([features['sort_col_dist_cnt'], features['sort_col_dist_frac'], features['sort_col_null_frac']], dim=-1))
         sort_col_stat_embedded = self.col_stat_project(torch.stack([features['sort_col_dist_frac'], features['sort_col_null_frac']], dim=-1))
-        if const.WO_STAT == self.ablation_feat:
-            sort_col_embedded = sort_col_pos_embedded
-        else:
-            sort_col_embedded = sort_col_pos_embedded + sort_col_type_embedded + sort_col_stat_embedded
+        sort_col_embedded = sort_col_pos_embedded + sort_col_type_embedded + sort_col_stat_embedded
 
         # output col embedding
         output_col_pos_embedded = self.col_pos_embedding(features['output_col_pos']) # [n_batch, n_index, n_node, n_output_col, emb_dim]
         output_col_type_embedded = self.col_type_embedding(features['output_col_type']) # [n_batch, n_index, n_node, n_output_col, emb_dim]
         # output_col_stat_embedded = self.col_stat_project(torch.stack([features['output_col_dist_cnt'], features['output_col_dist_frac'], features['output_col_null_frac']], dim=-1))
         output_col_stat_embedded = self.col_stat_project(torch.stack([features['output_col_dist_frac'], features['output_col_null_frac']], dim=-1))
-        if const.WO_STAT == self.ablation_feat:
-            output_col_embedded = output_col_pos_embedded
-        else:
-            output_col_embedded = output_col_pos_embedded + output_col_type_embedded + output_col_stat_embedded
+        output_col_embedded = output_col_pos_embedded + output_col_type_embedded + output_col_stat_embedded
         
         # node feature embedding
         operator_embedded = self.operator_embedding(features['operator'])
@@ -437,15 +421,14 @@ class Eddie(nn.Module):
         rows_embedded = self.rows_embedding(features['rows'])
 
         # Concatenate all embeddings along the last dimension
-        output_col_embedded = output_col_embedded.reshape(*output_col_embedded.shape[:-2], -1)
         combined_embedded = torch.cat([
             operator_embedded,
             cost_embedded,
-            torch.zeros_like(rows_embedded) if const.WO_ROWS == self.ablation_feat else rows_embedded,
+            rows_embedded,
             sort_consistent_embedded,
             sort_col_embedded.reshape(*sort_col_embedded.shape[:-2], -1),
-            torch.zeros_like(output_col_embedded) if const.WO_OUTPUT_COL == self.ablation_feat else output_col_embedded,
-            torch.zeros_like(predicate_feat_added) if const.WO_PREDICATE == self.ablation_feat else predicate_feat_added
+            output_col_embedded.reshape(*output_col_embedded.shape[:-2], -1),
+            predicate_feat_added
         ], dim=-1)
         
         node_embedded = F.leaky_relu(self.node_emb_project(combined_embedded)) # [n_batch, n_index, n_node, hidden_dim]

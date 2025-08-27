@@ -48,6 +48,7 @@ def main(run_cfg):
     db_stat_path = run_cfg["db_stat_path"]
     checkpoints_path = run_cfg["checkpoints_path"]
     clip_label = run_cfg["clip_label"] == "True"
+    ablation_feature = run_cfg["ablation_feature"] if "ablation_feature" in run_cfg else ""
 
     setup_logging(run_id)
     logging.info(f"using run_id: {run_id}, model_name: {model_name}")
@@ -83,7 +84,7 @@ def main(run_cfg):
         logging.info(f"**************************** Fold-{fold_i} Start ****************************")
         
         model = Eddie(max_sort_col_num=model_args.max_sort_col_num, max_output_col_num=model_args.max_output_col_num, max_predicate_num=model_args.max_predicate_num, \
-                            disable_idx_attn=model_args.disable_idx_attn, clip_label=clip_label)
+                            disable_idx_attn=model_args.disable_idx_attn, clip_label=clip_label, ablation_feat=ablation_feature)
 
         os.makedirs(checkpoints_path, exist_ok=True)
         model_path = f"{checkpoints_path}/fold_{fold_i}.pth"
@@ -156,10 +157,11 @@ if __name__ == '__main__':
     main(run_cfg)
 
 ''' example
-python run_eddie.py \
-    --run_id tpcds__base_w_init_idx__eddie_v1 \
+nohup python run_eddie.py \
+    --run_id tpcds__base_w_init_idx__eddie_v1_0 \
     --model_name eddie \
-    --dataset_path ./datasets/tpcds__base_w_init_idx.pickle \
+    --dataset_path ./datasets/tpcds__base_wo_init_idx.pickle \
     --db_stat_path ./db_stats_data/indexselection_tpcds___10_stats.json \
-    --checkpoints_path ./checkpoints/tpcds__base_w_init_idx__eddie_v1
+    --checkpoints_path ./checkpoints/tpcds__base_w_init_idx__eddie_v1_0 \
+    > /dev/null 2>&1 &
 '''

@@ -49,7 +49,8 @@ def main(run_cfg):
     seed_everything(0)
     
     args = ModelArgs()
-    schema_name2encoding = {"tpcds":tpcds10_encoding, "tpch":tpch10_encoding, "imdb":imdb_encoding}
+    schema_name2encoding = {"tpcds":tpcds10_encoding, "tpch":tpch10_encoding, "imdb":imdb_encoding,
+                            "tpcds_plus":tpcds10_encoding, "tpch_plus":tpch10_encoding,}
     
     run_id = run_cfg["run_id"]
     model_name = run_cfg["model_name"]
@@ -137,6 +138,7 @@ def main(run_cfg):
             logging.info("start infering")
             val_loss_list, val_pred_list, val_label_list, val_scores = evaluate(model, val_dataloader, args.device, args)
             val_scores_list.append(val_scores)
+            vary_val_scores_list.append(val_scores)
         
         logging.info(f"**************************** Fold-{fold_i} End ****************************\n\n")
         

@@ -62,7 +62,7 @@ if __name__ == '__main__':
                         run_cfg["hist_file_path"] = db_id2info[base_db_id]['hist_file_path']
                         run_cfg["db_name"] = db_id2info[base_db_id]['db_name']
                     else:
-                        parent_run_id = exp['parent_exp_id'] + '__' + model_name + '_' + ablation_feature + version
+                        parent_run_id = exp['parent_exp_id'] + '__' + model_name + '_' + version
                         parent_run_cfg = run_cfg_map[parent_run_id]
                         # use parent exp checkpoint and dataset
                         run_cfg["checkpoints_path"] = parent_run_cfg['checkpoints_path']
@@ -103,4 +103,4 @@ if __name__ == '__main__':
                 run_cfg["parent_run_id"] = exp['parent_exp_id'] + '__' + run_cfg["model_name"] + '_' + version
                 finetune_eddie_main(run_cfg)
 
-# nohup python ./main.py --config ./exp_configs/exp_config_tpcds_plus.json > ./main_tpcds_plus.log 2>&1 &
+# nohup python ./main_tpch_ablation.py --config exp_configs/exp_config_tpch_ablation.json > ./main_tpch_ablation.log 2>&1 &

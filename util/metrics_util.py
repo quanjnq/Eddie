@@ -1,6 +1,6 @@
 import numpy as np
 import math
-from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 import logging
 from collections import defaultdict
 
@@ -23,6 +23,10 @@ def calc_qerror(preds, labels):
     e_50, e_90, e_95 = np.median(qerror), np.percentile(qerror, 90), np.percentile(qerror, 95)
     e_mean = np.mean(qerror)
     e_max = np.max(qerror)
+    epsilon = 1e-4  # 防止除以零的小常数
+    preds_np = np.array(preds)
+    labels_np = np.array(labels)
+    # mape = np.mean(np.abs((labels_np - preds_np) / (labels_np + epsilon))) * 100  # 百分比形式
 
     res = {
         'q_50': e_50,
@@ -30,7 +34,9 @@ def calc_qerror(preds, labels):
         'q_95': e_95,
         'q_mean': e_mean,
         # 'q_max': e_max,
-        'mae': mean_absolute_error(preds, labels)
+        'mae': mean_absolute_error(preds, labels),
+        "rmse":  np.sqrt(mean_squared_error(preds, labels)),  # RMSE = sqrt(MSE)
+        # "mape":mape
     }
 
     return res

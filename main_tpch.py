@@ -41,15 +41,14 @@ if __name__ == '__main__':
         
         run_cfg_map = {}
         for exp in experiments:
-            if exp.get('skip'):
-                continue
             
             if "pretrain" not in exp['exp_id'] and "finetune" not in exp['exp_id']: # Pre-training fine-tuning does not follow the main experimental logic
                 for model_name in exp["run_models"]:
                     exp_id = exp['exp_id']
                     run_cfg = {}
                     ablation_feature = ablation_feature + "_" if ablation_feature else ""
-                    run_cfg["run_id"] = exp_id + '__' + model_name + '_' + ablation_feature + version
+                    run_cfg["run_id"] = exp_id + '__' + model_name + '_' + version
+                    print("run_id", run_cfg["run_id"])
                     run_cfg["model_name"] = model_name
                     run_cfg["workload_name"] = workload_name
                     run_cfg["clip_label"] = "True"
@@ -62,7 +61,8 @@ if __name__ == '__main__':
                         run_cfg["hist_file_path"] = db_id2info[base_db_id]['hist_file_path']
                         run_cfg["db_name"] = db_id2info[base_db_id]['db_name']
                     else:
-                        parent_run_id = exp['parent_exp_id'] + '__' + model_name + '_' + ablation_feature + version
+                        parent_run_id = exp['parent_exp_id'] + '__' + model_name + '_' + version
+                        print("parent_run_id", parent_run_id)
                         parent_run_cfg = run_cfg_map[parent_run_id]
                         # use parent exp checkpoint and dataset
                         run_cfg["checkpoints_path"] = parent_run_cfg['checkpoints_path']
@@ -86,6 +86,9 @@ if __name__ == '__main__':
             run_cfg = {}
             run_cfg.update(exp)
             exp_id = exp['exp_id']
+            
+            if exp.get('skip'):
+                continue
             if "end2end" in exp_id:
                 run_cfg["db_name"] = db_id2info[base_db_id]['db_name']
                 run_cfg["db_stat_path"] = db_id2info[base_db_id]['db_stat_path']
@@ -103,4 +106,4 @@ if __name__ == '__main__':
                 run_cfg["parent_run_id"] = exp['parent_exp_id'] + '__' + run_cfg["model_name"] + '_' + version
                 finetune_eddie_main(run_cfg)
 
-# nohup python ./main.py --config ./exp_configs/exp_config_tpcds_plus.json > ./main_tpcds_plus.log 2>&1 &
+# nohup python ./main_tpch.py --config ./exp_configs/exp_config_tpch.json > ./main_tpch1.log 2>&1 &

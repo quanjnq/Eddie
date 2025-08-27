@@ -181,3 +181,10 @@ datasets_gen/data/
 datasets0/
 db_stats_data0/
 tmp/
+checkpoints0/
+datasets_v0/
+log/
+logs_old/
+nohup.out
+join-order-benchmark/
+tpcds-kit/

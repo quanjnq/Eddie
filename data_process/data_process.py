@@ -21,6 +21,8 @@ def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_t
         query = sample[0]
         init_index_comb, index_comb = sample[1]
         orig_times, orig_plan = sample[2]
+        if orig_plan:
+            orig_times = orig_plan["Actual Total Time"]
         with_index_runtimes, with_index_plan = sample[3]
         if len(sample) >= 5:
             query_type = sample[4]
@@ -30,6 +32,8 @@ def data_preprocess(dataset_path, db_stat_path, log_label=False, random_change_t
             query_type = "unk"
         if with_index_runtimes is None:
             with_index_runtimes, with_index_plan = orig_times, orig_plan
+        if with_index_plan:
+            with_index_runtimes = with_index_plan["Actual Total Time"]
         # If the initial index encounters a timeout, set the label of the timeout sample to 0
         if orig_times > 0.0 and orig_times >= with_index_runtimes:
             label = (orig_times - with_index_runtimes) / orig_times
