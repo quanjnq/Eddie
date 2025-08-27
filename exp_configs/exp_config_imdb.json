@@ -39,20 +39,20 @@
             "experiments": [
                 {
                     "exp_id": "imdb__base_wo_init_idx",
-                    "dataset_path":  "./datasets_v0/imdb__base_wo_init_idx.pickle",
+                    "dataset_path":  "./datasets/imdb__base_wo_init_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": false
+                    "skip": true
                 },
                 {
                     "exp_id": "imdb__base_w_init_idx",
-                    "dataset_path":  "./datasets_v0/imdb__base_w_init_idx.pickle",
+                    "dataset_path":  "./datasets/imdb__base_w_init_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
                     "skip": false
                 },
                 {
                     "exp_id": "imdb__vary_query",
                     "parent_exp_id": "imdb__base_w_init_idx",
-                    "vary_dataset_path":  "./datasets_v0/imdb__vary_query.pickle",
+                    "vary_dataset_path":  "./datasets/imdb__vary_query.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
                     "skip": false
                 },
@@ -65,15 +65,15 @@
                 },
                 {
                     "exp_id": "imdb__perturb_idx",
-                    "dataset_path":  "./datasets_v0/imdb__perturb_idx.pickle",
+                    "dataset_path":  "./datasets/imdb__perturb_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
                     "skip": false
                 },
                 {
                     "exp_id": "imdb__end2end",
-                    "dataset_path":  "./datasets_v0/imdb__end2end.pickle",
+                    "dataset_path":  "./datasets/imdb__end2end.pickle",
                     "run_models": ["eddie", "lib"],
-                    "skip": false
+                    "skip": true
                 },
                 {
                     "exp_id": "imdb__pretrain",

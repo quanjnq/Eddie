@@ -34,99 +34,62 @@
     ],
     "workloads": [
         {
-            "workload_name": "imdb",
-            "db_id": "imdb",
-            "experiments": [
-                {
-                    "exp_id": "imdb__base_wo_init_idx",
-                    "dataset_path":  "./datasets_v0/imdb__base_wo_init_idx.pickle",
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__base_w_init_idx",
-                    "dataset_path":  "./datasets_v0/imdb__base_w_init_idx.pickle",
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__vary_query",
-                    "parent_exp_id": "imdb__base_w_init_idx",
-                    "vary_dataset_path":  "./datasets_v0/imdb__vary_query.pickle",
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__vary_schema",
-                    "parent_exp_id": "imdb__base_w_init_idx",
-                    "vary_schema": true,
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__perturb_idx",
-                    "dataset_path":  "./datasets_v0/imdb__perturb_idx.pickle",
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__end2end",
-                    "dataset_path":  "./datasets_v0/imdb__end2end.pickle",
-                    "run_models": ["eddie", "lib"],
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__pretrain",
-                    "model_name": "eddie",
-                    "skip": true
-                },
-                {
-                    "exp_id": "imdb__finetune",
-                    "parent_exp_id": "imdb__pretrain",
-                    "model_name": "eddie",
-                    "finetune_data_rate": 0.5,
-                    "use_pretrain_model": true,
-                    "skip": true
-                }
-            ]
-        },
-        {
             "workload_name": "imdb_plus",
             "db_id": "imdb",
             "experiments": [
                 {
                     "exp_id": "imdb_plus__base_wo_init_idx",
-                    "dataset_path":  "./datasets_v0/imdb_plus__base_wo_init_idx.pickle",
+                    "dataset_path":  "./datasets/imdb_plus__base_wo_init_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
                     "skip": false
                 },
                 {
                     "exp_id": "imdb_plus__base_w_init_idx",
-                    "dataset_path":  "./datasets_v0/imdb_plus__base_w_init_idx.pickle",
+                    "dataset_path":  "./datasets/imdb_plus__base_w_init_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "imdb_plus__vary_query",
                     "parent_exp_id": "imdb_plus__base_w_init_idx",
-                    "vary_dataset_path":  "./datasets_v0/imdb_plus__vary_query.pickle",
+                    "vary_dataset_path":  "./datasets/imdb_plus__vary_query.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "imdb_plus__vary_schema",
                     "parent_exp_id": "imdb_plus__base_w_init_idx",
                     "vary_schema": true,
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "imdb_plus__perturb_idx",
-                    "dataset_path":  "./datasets_v0/imdb_plus__perturb_idx.pickle",
+                    "dataset_path":  "./datasets/imdb_plus__perturb_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
                     "skip": false
+                },
+                {
+                    "exp_id": "imdb_plus__end2end",
+                    "dataset_path":  "./datasets/imdb_plus__end2end.pickle",
+                    "run_models": ["eddie", "lib"],
+                    "skip": true
+                },
+                {
+                    "exp_id": "imdb_plus__pretrain",
+                    "model_name": "eddie",
+                    "skip": true
+                },
+                {
+                    "exp_id": "imdb_plus__finetune",
+                    "parent_exp_id": "imdb_plus__pretrain",
+                    "model_name": "eddie",
+                    "finetune_data_rate": 0.5,
+                    "use_pretrain_model": true,
+                    "skip": true
                 }
             ]
         }
+        
     ]
 }

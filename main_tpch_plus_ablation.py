@@ -103,4 +103,4 @@ if __name__ == '__main__':
                 run_cfg["parent_run_id"] = exp['parent_exp_id'] + '__' + run_cfg["model_name"] + '_' + version
                 finetune_eddie_main(run_cfg)
 
-# nohup python ./main_tpch_ablation.py --config exp_configs/exp_config_tpch_ablation.json > ./main_tpch_ablation.log 2>&1 &
+# nohup python ./main_tpch_plus_ablation.py --config exp_configs/exp_config_tpch_plus_ablation.json > ./main_tpch_plus_ablation.log 2>&1 &

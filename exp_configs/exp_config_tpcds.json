@@ -65,13 +65,13 @@
                     "exp_id": "tpcds_plus__base_wo_init_idx",
                     "dataset_path":  "./datasets/tpcds_plus__base_wo_init_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": false
+                    "skip": true
                 },
                 {
                     "exp_id": "tpcds_plus__perturb_idx",
                     "dataset_path":  "./datasets/tpcds_plus__perturb_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": false
+                    "skip": true
                 }
             ]
         },
@@ -83,14 +83,14 @@
                     "exp_id": "tpcds__base_w_init_idx",
                     "dataset_path":  "./datasets/tpcds__base_w_init_idx.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpcds__vary_query",
                     "parent_exp_id": "tpcds__base_w_init_idx",
                     "vary_dataset_path":  "./datasets/tpcds__vary_query.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpcds__vary_stat",
@@ -98,44 +98,30 @@
                     "vary_db_id": "tpcds_5",
                     "vary_dataset_path":  "./datasets/tpcds__vary_stat.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpcds__vary_schema",
                     "parent_exp_id": "tpcds__base_w_init_idx",
                     "vary_schema": true,
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpcds__pretrain",
+                    "model_name": "eddie",
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpcds__finetune",
+                    "parent_exp_id": "tpcds__pretrain",
+                    "model_name": "eddie",
+                    "finetune_data_rate": 0.5,
+                    "use_pretrain_model": true,
+                    "skip": false
                 }
             ]
             
-        },
-        {
-            "workload_name": "tpcds_plus",
-            "db_id": "tpcds_10",
-            "experiments": [
-                {
-                    "exp_id": "tpcds_plus__base_w_init_idx",
-                    "dataset_path":  "./datasets/tpcds_plus__base_w_init_idx.pickle",
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": false
-                },
-                {
-                    "exp_id": "tpcds_plus__vary_stat",
-                    "parent_exp_id": "tpcds_plus__base_w_init_idx",
-                    "vary_db_id": "tpcds_5",
-                    "vary_dataset_path":  "./datasets/tpcds_plus__vary_stat.pickle",
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": false
-                },
-                {
-                    "exp_id": "tpcds_plus__vary_schema",
-                    "parent_exp_id": "tpcds_plus__base_w_init_idx",
-                    "vary_schema": true,
-                    "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": false
-                }
-            ]
         }
     ]
 }

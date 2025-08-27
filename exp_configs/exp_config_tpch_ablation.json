@@ -1,5 +1,5 @@
 {
-    "version": "v2",
+    "version": "v3",
     "databases": [
         {
             "db_id": "tpcds_10",
@@ -94,6 +94,44 @@
             "workload_name": "tpch",
             "db_id": "tpch_10",
             "ablation_feature": "WO_OUTPUT_COL",
+            "experiments": [
+                {
+                    "exp_id": "tpch__base_w_init_idx",
+                    "dataset_path":  "./datasets/tpch__base_w_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpch__base_wo_init_idx",
+                    "dataset_path":  "./datasets/tpch__base_wo_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": true
+                }
+            ]
+        },
+        {
+            "workload_name": "tpch",
+            "db_id": "tpch_10",
+            "ablation_feature": "WO_HIST",
+            "experiments": [
+                {
+                    "exp_id": "tpch__base_w_init_idx",
+                    "dataset_path":  "./datasets/tpch__base_w_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpch__base_wo_init_idx",
+                    "dataset_path":  "./datasets/tpch__base_wo_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": true
+                }
+            ]
+        },
+        {
+            "workload_name": "tpch",
+            "db_id": "tpch_10",
+            "ablation_feature": "WO_ATTN",
             "experiments": [
                 {
                     "exp_id": "tpch__base_w_init_idx",

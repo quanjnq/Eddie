@@ -41,15 +41,14 @@ if __name__ == '__main__':
         
         run_cfg_map = {}
         for exp in experiments:
-            if exp.get('skip'):
-                continue
+            
             
             if "pretrain" not in exp['exp_id'] and "finetune" not in exp['exp_id']: # Pre-training fine-tuning does not follow the main experimental logic
                 for model_name in exp["run_models"]:
                     exp_id = exp['exp_id']
                     run_cfg = {}
-                    ablation_feature = ablation_feature + "_" if ablation_feature else ""
-                    run_cfg["run_id"] = exp_id + '__' + model_name + '_' + ablation_feature + version
+                    ablation_feature_str = ablation_feature + "_" if ablation_feature else ""
+                    run_cfg["run_id"] = exp_id + '__' + model_name + '_' + ablation_feature_str + version
                     run_cfg["model_name"] = model_name
                     run_cfg["workload_name"] = workload_name
                     run_cfg["clip_label"] = "True"
@@ -81,8 +80,13 @@ if __name__ == '__main__':
                     run_cfg_map[run_cfg["run_id"]] = run_cfg
                     
                     if not exp.get('skip'):
-                        entrypoint_map[model_name](run_cfg)
+                        try:
+                            entrypoint_map[model_name](run_cfg)
+                        except Exception as e:
+                            print(f"model_name={model_name} run_cfg={run_cfg}", e)
             
+            if exp.get('skip'):
+                continue
             run_cfg = {}
             run_cfg.update(exp)
             exp_id = exp['exp_id']
@@ -104,3 +108,5 @@ if __name__ == '__main__':
                 finetune_eddie_main(run_cfg)
 
 # nohup python ./main.py --config ./exp_configs/exp_config_tpcds_plus.json > ./main_tpcds_plus.log 2>&1 &
+# nohup python ./main.py --config exp_configs/exp_config_tpch.json > ./main_tpch_vary.log 2>&1 &
+

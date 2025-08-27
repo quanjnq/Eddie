@@ -13,7 +13,7 @@ from util.metrics_util import print_k_fold_avg_scores
 from feat.feat_eddie import eddie_feat_data
 
 import logging
-
+import util.const_util as const
 
 class ModelArgs:
     def __init__(self):
@@ -49,15 +49,19 @@ def main(run_cfg):
     checkpoints_path = run_cfg["checkpoints_path"]
     clip_label = run_cfg["clip_label"] == "True"
     ablation_feature = run_cfg["ablation_feature"] if "ablation_feature" in run_cfg else ""
+    
+    
+    model_args.disable_idx_attn = ablation_feature == const.WO_ATTN
 
     setup_logging(run_id)
+    logging.info(f"ablation_feature: {ablation_feature}")
     logging.info(f"using run_id: {run_id}, model_name: {model_name}")
     logging.info(f"loading dataset from {dataset_path}")
     logging.info(f"loading db_stat_path from {db_stat_path}")
     logging.info(f"checkpoints_path: {checkpoints_path}")
     
     data_items, db_stat = data_preprocess(dataset_path, db_stat_path, model_args.log_label, clip_label=clip_label)
-    data_items = eddie_feat_data(data_items, db_stat)
+    data_items = eddie_feat_data(data_items, db_stat, enable_histogram=ablation_feature != const.WO_HIST)
     
     vary_eval = False
     if run_cfg.get('vary_dataset_path') or run_cfg.get('vary_db_stat_path') or run_cfg.get('vary_schema'):

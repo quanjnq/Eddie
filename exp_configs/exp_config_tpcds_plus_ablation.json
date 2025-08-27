@@ -36,6 +36,44 @@
         {
             "workload_name": "tpcds_plus",
             "db_id": "tpcds_10",
+            "ablation_feature": "WO_ATTN",
+            "experiments": [
+                {
+                    "exp_id": "tpcds_plus__base_w_init_idx",
+                    "dataset_path":  "./datasets/tpcds_plus__base_w_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpcds_plus__base_wo_init_idx",
+                    "dataset_path":  "./datasets/tpcds_plus__base_wo_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": true
+                }
+            ]
+        },
+        {
+            "workload_name": "tpcds_plus",
+            "db_id": "tpcds_10",
+            "ablation_feature": "WO_HIST",
+            "experiments": [
+                {
+                    "exp_id": "tpcds_plus__base_w_init_idx",
+                    "dataset_path":  "./datasets/tpcds_plus__base_w_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": false
+                },
+                {
+                    "exp_id": "tpcds_plus__base_wo_init_idx",
+                    "dataset_path":  "./datasets/tpcds_plus__base_wo_init_idx.pickle",
+                    "run_models": ["eddie"],
+                    "skip": true
+                }
+            ]
+        },
+        {
+            "workload_name": "tpcds_plus",
+            "db_id": "tpcds_10",
             "ablation_feature": "WO_STAT",
             "experiments": [
                 {

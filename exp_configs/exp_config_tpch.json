@@ -54,7 +54,7 @@
                     "parent_exp_id": "tpch__base_w_init_idx",
                     "vary_dataset_path":  "./datasets_v0/tpch__vary_query.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpch__vary_stat",
@@ -62,14 +62,14 @@
                     "vary_db_id": "tpch_5",
                     "vary_dataset_path":  "./datasets_v0/tpch__vary_stat.pickle",
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpch__vary_schema",
                     "parent_exp_id": "tpch__base_w_init_idx",
                     "vary_schema": true,
                     "run_models": ["eddie", "lib", "queryformer", "postgresql"],
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpch__perturb_idx",
@@ -86,7 +86,7 @@
                 {
                     "exp_id": "tpch__pretrain",
                     "model_name": "eddie",
-                    "skip": true
+                    "skip": false
                 },
                 {
                     "exp_id": "tpch__finetune",
@@ -94,7 +94,7 @@
                     "model_name": "eddie",
                     "finetune_data_rate": 0.5,
                     "use_pretrain_model": true,
-                    "skip": true
+                    "skip": false
                 }
             ]
         },

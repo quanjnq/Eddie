@@ -34,76 +34,76 @@
     ],
     "workloads": [
         {
-            "workload_name": "imdb",
+            "workload_name": "imdb_plus",
             "db_id": "imdb",
             "ablation_feature": "WO_STAT",
             "experiments": [
                 {
-                    "exp_id": "imdb__base_w_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_w_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_w_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_w_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": false
                 },
                 {
-                    "exp_id": "imdb__base_wo_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_wo_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_wo_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_wo_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": true
                 }
             ]
         },
         {
-            "workload_name": "imdb",
+            "workload_name": "imdb_plus",
             "db_id": "imdb",
             "ablation_feature": "WO_ROWS",
             "experiments": [
                 {
-                    "exp_id": "imdb__base_w_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_w_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_w_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_w_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": false
                 },
                 {
-                    "exp_id": "imdb__base_wo_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_wo_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_wo_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_wo_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": true
                 }
             ]
         },
         {
-            "workload_name": "imdb",
+            "workload_name": "imdb_plus",
             "db_id": "imdb",
             "ablation_feature": "WO_PREDICATE",
             "experiments": [
                 {
-                    "exp_id": "imdb__base_w_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_w_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_w_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_w_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": false
                 },
                 {
-                    "exp_id": "imdb__base_wo_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_wo_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_wo_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_wo_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": true
                 }
             ]
         },
         {
-            "workload_name": "imdb",
+            "workload_name": "imdb_plus",
             "db_id": "imdb",
             "ablation_feature": "WO_OUTPUT_COL",
             "experiments": [
                 {
-                    "exp_id": "imdb__base_w_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_w_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_w_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_w_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": false
                 },
                 {
-                    "exp_id": "imdb__base_wo_init_idx",
-                    "dataset_path":  "./datasets/imdb__base_wo_init_idx.pickle",
+                    "exp_id": "imdb_plus__base_wo_init_idx",
+                    "dataset_path":  "./datasets/imdb_plus__base_wo_init_idx.pickle",
                     "run_models": ["eddie"],
                     "skip": true
                 }

@@ -188,3 +188,5 @@ logs_old/
 nohup.out
 join-order-benchmark/
 tpcds-kit/
+datasets.zip
+batch_run/
