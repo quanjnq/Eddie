@@ -115,14 +115,14 @@ class EddieDataCollator:
                     batch_feat['sort_consistent'][si, ii, ni] = sort_order_consistency2idx['consistent'] if len(node['group_cols']) > 0 else node['sort_consistent']
                     for ci, col in enumerate(sort_cols):
                         batch_feat['sort_col_pos'][si, ii, ni, ci] = col['index_pos']
-                        batch_feat['sort_col_type'][si, ii, ni, ci] = data_types2idx[col['data_type']] if col['data_type'] else 0
+                        batch_feat['sort_col_type'][si, ii, ni, ci] = data_types2idx[col['data_type']] if col['data_type'] and col['data_type'] in data_types2idx else 0
                         batch_feat['sort_col_dist_cnt'][si, ii, ni, ci] = math.log(1 +col['dist_cnt']) if col['dist_cnt'] else 0
                         batch_feat['sort_col_dist_frac'][si, ii, ni, ci] = col['dist_frac'] if col['dist_frac'] else 0
                         batch_feat['sort_col_null_frac'][si, ii, ni, ci] = col['null_frac'] if col['null_frac'] else 0
                     
                     for ci, col in enumerate(node['output_cols']):
                         batch_feat['output_col_pos'][si, ii, ni, ci] = col['index_pos']
-                        batch_feat['output_col_type'][si, ii, ni, ci] = data_types2idx[col['data_type']] if col['data_type'] else 0
+                        batch_feat['output_col_type'][si, ii, ni, ci] = data_types2idx[col['data_type']] if col['data_type'] and col['data_type'] in data_types2idx else 0
                         batch_feat['output_col_dist_cnt'][si, ii, ni, ci] = math.log(1 +col['dist_cnt']) if col['dist_cnt'] else 0
                         batch_feat['output_col_dist_frac'][si, ii, ni, ci] = col['dist_frac'] if col['dist_frac'] else 0
                         batch_feat['output_col_null_frac'][si, ii, ni, ci] = col['null_frac'] if col['null_frac'] else 0
@@ -139,7 +139,7 @@ class EddieDataCollator:
                             if predicate['left_col']:
                                 left_col = predicate['left_col']
                                 batch_feat[f'{pt}_left_col_pos'][predicate_tree_idx, pi] = left_col['index_pos'] if left_col['index_pos'] else 0
-                                batch_feat[f'{pt}_left_col_type'][predicate_tree_idx, pi] = data_types2idx[left_col['data_type']] if left_col['data_type'] else 0
+                                batch_feat[f'{pt}_left_col_type'][predicate_tree_idx, pi] = data_types2idx[left_col['data_type']] if left_col['data_type'] and left_col['data_type'] in data_types2idx else 0
                                 batch_feat[f'{pt}_left_col_dist_cnt'][predicate_tree_idx, pi] = math.log(1 +left_col['dist_cnt']) if left_col['dist_cnt'] else 0
                                 batch_feat[f'{pt}_left_col_dist_frac'][predicate_tree_idx, pi] = left_col['dist_frac'] if left_col['dist_frac'] else 0
                                 batch_feat[f'{pt}_left_col_null_frac'][predicate_tree_idx, pi] = left_col['null_frac'] if left_col['null_frac'] else 0
@@ -147,7 +147,7 @@ class EddieDataCollator:
                             if 'right_col' in predicate and predicate['right_col']:
                                 right_col = predicate['right_col']
                                 batch_feat[f'{pt}_right_col_pos'][predicate_tree_idx, pi] = right_col['index_pos'] if right_col['index_pos'] else 0
-                                batch_feat[f'{pt}_right_col_type'][predicate_tree_idx, pi] = data_types2idx[right_col['data_type']] if right_col['data_type'] else 0
+                                batch_feat[f'{pt}_right_col_type'][predicate_tree_idx, pi] = data_types2idx[right_col['data_type']] if right_col['data_type'] and right_col['data_type'] in data_types2idx else 0
                                 batch_feat[f'{pt}_right_col_dist_cnt'][predicate_tree_idx, pi] = math.log(1 +right_col['dist_cnt']) if right_col['dist_cnt'] else 0
                                 batch_feat[f'{pt}_right_col_dist_frac'][predicate_tree_idx, pi] = right_col['dist_frac'] if right_col['dist_frac'] else 0
                                 batch_feat[f'{pt}_right_col_null_frac'][predicate_tree_idx, pi] = right_col['null_frac'] if right_col['null_frac'] else 0

@@ -1,3 +1,7 @@
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 # From Querformer
 import pandas as pd
 import json
@@ -67,8 +71,11 @@ def main(db_name, db_stat_path, conn_cfg=None):
             max_min_vals[f"{table}.{column}"] = [max_v, min_v]
             hist_file = hist_file._append(res_dict,ignore_index=True)
     fp = db_stats_save_path + f"{db_name}_hist_file.csv"
-    hist_file.to_csv()
+    hist_file.to_csv(fp)
+    print("min_max_vals:")
     print(min_max_vals)
+    print("col2id:")
+    print(col2id)
     print("Saved hist_file: ", fp)
     print(f"time cost: {time.time() - st} s")
 
@@ -88,6 +95,7 @@ if __name__ == '__main__':
         ("indexselection_tpcds___10", './db_stats_data/indexselection_tpcds___10_stats.json'),
         ("indexselection_tpch___10", './db_stats_data/indexselection_tpch___10_stats.json'),
         ("imdbload", './db_stats_data/imdbload_stats.json'),
+        ("clickbench", './db_stats_data/clickbench_stats.json'),
         ]
     for param in params:
         main(param[0], param[1], conn_cfg)

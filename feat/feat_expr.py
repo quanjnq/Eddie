@@ -140,8 +140,8 @@ class ExprTreeEncoder:
         if cast_type in index_utilized_cast_type[data_type]:
             # Eliminate types
             return tbl_col
-        logging.info(f"Type conversion to index is not available, the original data type:{data_type} Conversion Goal Type:{data_type} Check Items:{tbl_col_type} Index table name:{self.index_tbl_name}")
-        return tbl_col_type
+        logging.debug(f"Type conversion to index is not available, the original data type:{data_type} Conversion Goal Type:{cast_type} Check Items:{tbl_col} Index table name:{self.index_tbl_name}")
+        return tbl_col
 
     def is_number(self, s):
         try:  

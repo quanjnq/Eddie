@@ -19,7 +19,7 @@ ops_index_scan_dict = {"Bitmap Index Scan": 3, "Index Scan": 4, "Index Only Scan
 node_types2idx={'Unique':0,'Hash Join':1,'Bitmap Heap Scan':2,'Materialize':3,'SetOp':4,'Subquery Scan':5,'Aggregate':6,'BitmapAnd':7,'Gather Merge':8,'WindowAgg':9,'Sort':10,'Gather':11,'Index Scan':12,'Merge Join':13,'Bitmap Index Scan':14,'Nested Loop':15,'Index Only Scan':16,'CTE Scan':17,'Hash':18,'BitmapOr':19,'Limit':20,'Result':21,'Merge Append':22,'Append':23,'Group':24,'Seq Scan':25}
 idx2node_type = {node_types2idx[k]: k for k in node_types2idx}
 sort_order_consistency2idx = {"PAD": 0, "consistent":1, "inconsistent":2}
-data_types2idx = {'character varying': 1, 'date': 2, 'time without time zone': 3, 'character': 4, 'integer': 5, 'numeric': 6, 'bigint': 7, 'double precision': 8, 'text': 9, 'bytea': 10}
+data_types2idx = {'character varying': 1, 'date': 2, 'time without time zone': 3, 'character': 4, 'integer': 5, 'numeric': 6, 'bigint': 7, 'double precision': 8, 'text': 9, 'bytea': 10, "smallint": 11}
 
 class TreeNode:
     def __init__(self, node_type, type_id):

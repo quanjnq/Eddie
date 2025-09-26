@@ -189,4 +189,8 @@ nohup.out
 join-order-benchmark/
 tpcds-kit/
 datasets.zip
-batch_run/
+batch_run/0
+exp_configs/tmp/
+fast_sql_queries.sql
+tmp/
+eddie_datasets/

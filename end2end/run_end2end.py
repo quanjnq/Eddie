@@ -22,9 +22,10 @@ from lib_est.lib_model import make_model, self_attn_model
 import argparse
 
 
-def get_cost_evaluation(model_name, exp_id, version, fold_i, db_connector, db_stats, sql2plan, checkpoints_path):
-    model_path = checkpoints_path.format(model_name=model_name)
-    model_path = os.path.join(model_path, f"fold_{fold_i}.pth")
+def get_cost_evaluation(model_name, exp_id, version, fold_i, db_connector, db_stats, sql2plan, checkpoints_path_dir):
+    run_id = exp_id + '__' + model_name + '_' + version
+    model_path = os.path.join(checkpoints_path_dir, f"{run_id}/fold_{fold_i}.pth")
+    
     
     logging.info(f"load model from {model_path}")
     if model_name == "eddie":
@@ -110,12 +111,12 @@ def calc_score(result_list):
 from util.log_util import setup_logging
 def main(run_config):
     random_util.seed_everything(0)
-    
+    print(run_config)
     model_names = run_config["run_models"]
     dataset_path = run_config["dataset_path"]
     version = run_config.get("version", "v1")
     exp_id = run_config.get("exp_id", dataset_path.split('.')[0])
-    checkpoints_path = run_config.get("checkpoints_path", "./checkpoints/tpcds__end2end__{model_name}_v1")
+    checkpoints_path = run_config.get("checkpoints_path", "./checkpoints/")
 
     db_name = run_config["db_name"]
     db_satats_path = run_config["db_stat_path"]

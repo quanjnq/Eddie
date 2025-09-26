@@ -68,7 +68,10 @@ def eddie_feat_data(all_samples, db_stats, max_sample_cnt=None, enable_histogram
         feat_dict["sample_id"] = si
         feat_dict["query_type"] = query_type
         feat_dict["query"] = query
+        feat_dict["sql"] = query.text
         feat_dict["orig_plan"] = orig_plan
+        feat_dict["indexes_str"] = index_config
+        feat_dict["plan_tree"] = sample["plan_tree"]
             
         feat_dicts.append(feat_dict)
     return feat_dicts

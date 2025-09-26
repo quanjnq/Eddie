@@ -20,7 +20,10 @@ class Query:
     def __lt__(self,other):
         return self.text<other.text
 
+# HINT:  Values larger than 1/3 of a buffer page cannot be indexed.
 imdb_black_index_cols = ["movie_info.info", "movie_info_idx.note", "person_info.info"]
+hits_black_index_cols = ["hits.url"]
+black_index_cols = imdb_black_index_cols + hits_black_index_cols
 class Workload:
     queries: List[Query]
 
@@ -33,7 +36,7 @@ class Workload:
         for query in self.queries:
             indexable_columns |= set(query.columns)
         for col in indexable_columns:
-            if f"{col.table.name}.{col.name}" not in imdb_black_index_cols:
+            if f"{col.table.name}.{col.name}" not in black_index_cols:
                 indexable_columns_list.append(col)
         return sorted(indexable_columns_list)
 

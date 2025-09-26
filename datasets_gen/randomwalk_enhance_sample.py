@@ -62,12 +62,19 @@ def get_indcfg_list(query,  visted, sample_multiple=2):
             cand_inds.add(ind)
     tgt_num = len(visted) * sample_multiple # Target the number of samples to be expanded
     indcfg_list = []
+    if len(cand_inds) == 0:
+        return []
+    max_loop = 100
+    cnt_loop = 0
     while len(indcfg_list) < tgt_num:
         walk_steps = random_walk(list(cand_inds), visted)
         for ws in walk_steps:
             indcfg = tuple(sorted(ws))
             if indcfg not in visted:
                 indcfg_list.append(indcfg)
+        cnt_loop += 1
+        if cnt_loop > max_loop:
+            break
     indcfg_list = indcfg_list[:tgt_num]
     return indcfg_list
 

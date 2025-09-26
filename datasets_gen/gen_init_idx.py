@@ -62,7 +62,7 @@ def gen_with_init_idx_samples(base_sample_path, save_path):
             for ipt_indcfg in input_indcfgs:
 
                 new_sample = compose_init_indexes_sample(indcfg2sample[indcfg], indcfg2sample[ipt_indcfg])
-                if new_sample is None or (new_sample[2][0] is not None and new_sample[2][1] is not None):
+                if new_sample is None or (new_sample[2][0] is None and new_sample[2][1] is None):
                     continue
                 with_init_ind_samples.append(new_sample)
                 ind_time = new_sample[3][0] if new_sample[3][0] else new_sample[2][0]
@@ -78,6 +78,8 @@ def gen_with_init_idx_samples(base_sample_path, save_path):
         os.makedirs(dst_dir)
     with open(save_path, "wb") as f:
         pickle.dump(with_init_ind_samples, f)
+        logging.info(f"wo dataset size: {len(smpls)}")
+        logging.info(f"w dataset size: {len(with_init_ind_samples)}")
         logging.info(f"Saved dataset: {save_path}")
         
     return with_init_ind_samples

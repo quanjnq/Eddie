@@ -14,7 +14,7 @@ def import_database(workload_name, scale_factor, explicit_database_name=None, ho
     random.seed(0)
     log_id = run_id if run_id else f"import_db_{workload_name}_{str(scale_factor)}"
     scale_factor = float(scale_factor)
-    port = int(port)
+    port = int(port) if port else port
     setup_logging(log_id)
     
     import_param = {"workload_name":workload_name, "scale_factor":scale_factor, "explicit_database_name":explicit_database_name, "host":host, "port":port, "user":user, "run_id":run_id}

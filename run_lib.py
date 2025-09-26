@@ -108,7 +108,29 @@ def main(run_cfg):
             val_keys = set([split_key_of(item) for item in val_items])
             vary_val_items = [item for item in vary_data_items if split_key_of(item) in val_keys]
         
-            val_ds = LibDataset(vary_val_items, vary_db_stat)
+            if 'vary_query' in run_id:
+                logging.info("collect vary_query test items")
+                import re
+                def is_new_predicate(odl_sql, new_sql):
+                    if odl_sql == new_sql:
+                        return True
+                    where_token = r"\b[wW][hH][eE][rR][eE]\b"
+                    str_li = re.split(where_token, odl_sql)
+                    for substr in str_li:
+                        if substr not in new_sql:
+                            return False
+                    return True
+                val_texts = set([it["query"].text for it in val_items])
+                test_items = []
+                for item in vary_data_items:
+                    for text in val_texts:
+                        if is_new_predicate(text, item["query"].text):
+                            test_items.append(item)
+                            break
+                val_ds = LibDataset(test_items, vary_db_stat)
+            else:
+                val_ds = LibDataset(vary_val_items, vary_db_stat)
+            
             logging.info(f"len val data {len(val_ds)}")
             val_dataloader = DataLoader(val_ds, batch_size=args.batch_size, collate_fn=collate_fn4lib, num_workers=16, pin_memory=True)
     

@@ -52,7 +52,7 @@ class LibDataset(Dataset):
 
                             # 2. database statistics (4)
                             # card = 0 if node["detail"]["Plan Rows"] == 0 else np.log(node["detail"]["Plan Rows"])
-                            if node["detail"]["Actual Rows"] == 0:
+                            if "Actual Rows" not in node["detail"] or node["detail"]["Actual Rows"] == 0:
                                 card = 0
                             else:
                                 card = np.log(node["detail"]["Actual Rows"])

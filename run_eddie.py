@@ -54,11 +54,12 @@ def main(run_cfg):
     model_args.disable_idx_attn = ablation_feature == const.WO_ATTN
 
     setup_logging(run_id)
-    logging.info(f"ablation_feature: {ablation_feature}")
     logging.info(f"using run_id: {run_id}, model_name: {model_name}")
     logging.info(f"loading dataset from {dataset_path}")
     logging.info(f"loading db_stat_path from {db_stat_path}")
     logging.info(f"checkpoints_path: {checkpoints_path}")
+    logging.info(f"ablation_feature: {ablation_feature}")
+    logging.info(f"clip_label: {clip_label}")
     
     data_items, db_stat = data_preprocess(dataset_path, db_stat_path, model_args.log_label, clip_label=clip_label)
     data_items = eddie_feat_data(data_items, db_stat, enable_histogram=ablation_feature != const.WO_HIST)
@@ -116,8 +117,29 @@ def main(run_cfg):
             logging.info("load checkpoints and eval new dataset")
             val_keys = set([split_key_of(item) for item in val_items])
             vary_val_items = [item for item in vary_data_items if split_key_of(item) in val_keys]
-        
-            val_ds = EddieDataset(vary_val_items)
+            
+            if 'vary_query' in run_id:
+                logging.info("collect vary_query test items")
+                import re
+                def is_new_predicate(odl_sql, new_sql):
+                    if odl_sql == new_sql:
+                        return True
+                    where_token = r"\b[wW][hH][eE][rR][eE]\b"
+                    str_li = re.split(where_token, odl_sql)
+                    for substr in str_li:
+                        if substr not in new_sql:
+                            return False
+                    return True
+                val_texts = set([it["query"].text for it in val_items])
+                test_items = []
+                for item in vary_data_items:
+                    for text in val_texts:
+                        if is_new_predicate(text, item["query"].text):
+                            test_items.append(item)
+                            break
+                val_ds = EddieDataset(test_items)
+            else:
+                val_ds = EddieDataset(vary_val_items)
             logging.info(f"len val data {len(val_ds)}")
             dataCollator = EddieDataCollator(model_args.max_sort_col_num, model_args.max_output_col_num, model_args.max_attn_dist, model_args.log_label)
             val_dataloader = DataLoader(val_ds, batch_size=model_args.batch_size, collate_fn=dataCollator.collate_fn, num_workers=16, pin_memory=True)

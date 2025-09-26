@@ -6,6 +6,7 @@ from run_pg_what_if_est import main as whatif_main
 from end2end.run_end2end import main as end2end_main
 from pretrain_finetune.run_pretrain_eddie import main as pretrain_eddie_main
 from pretrain_finetune.run_finetune_eddie import main as finetune_eddie_main
+from run_aimeetsai import main as aimai_main
 
 import argparse
 
@@ -14,7 +15,8 @@ entrypoint_map  = {
     "eddie": eddie_main, 
     "lib": lib_main, 
     "queryformer": qf_main, 
-    "postgresql": whatif_main
+    "postgresql": whatif_main,
+    "aimai": aimai_main
 }
 
 if __name__ == '__main__':
@@ -51,7 +53,7 @@ if __name__ == '__main__':
                     run_cfg["run_id"] = exp_id + '__' + model_name + '_' + ablation_feature_str + version
                     run_cfg["model_name"] = model_name
                     run_cfg["workload_name"] = workload_name
-                    run_cfg["clip_label"] = "True"
+                    run_cfg["clip_label"] = "False" if "end2end" in exp_id else "True"
                     run_cfg["ablation_feature"] = ablation_feature
 
                     if not 'parent_exp_id' in exp:
@@ -61,7 +63,7 @@ if __name__ == '__main__':
                         run_cfg["hist_file_path"] = db_id2info[base_db_id]['hist_file_path']
                         run_cfg["db_name"] = db_id2info[base_db_id]['db_name']
                     else:
-                        parent_run_id = exp['parent_exp_id'] + '__' + model_name + '_' + ablation_feature + version
+                        parent_run_id = exp['parent_exp_id'] + '__' + model_name + '_' + ablation_feature_str + version
                         parent_run_cfg = run_cfg_map[parent_run_id]
                         # use parent exp checkpoint and dataset
                         run_cfg["checkpoints_path"] = parent_run_cfg['checkpoints_path']
@@ -83,7 +85,7 @@ if __name__ == '__main__':
                         try:
                             entrypoint_map[model_name](run_cfg)
                         except Exception as e:
-                            print(f"model_name={model_name} run_cfg={run_cfg}", e)
+                            print(f"exception: model_name={model_name} run_cfg={run_cfg}", e)
             
             if exp.get('skip'):
                 continue
@@ -106,7 +108,3 @@ if __name__ == '__main__':
                 run_cfg["checkpoints_path"] = f"./checkpoints/{run_cfg['run_id']}"
                 run_cfg["parent_run_id"] = exp['parent_exp_id'] + '__' + run_cfg["model_name"] + '_' + version
                 finetune_eddie_main(run_cfg)
-
-# nohup python ./main.py --config ./exp_configs/exp_config_tpcds_plus.json > ./main_tpcds_plus.log 2>&1 &
-# nohup python ./main.py --config exp_configs/exp_config_tpch.json > ./main_tpch_vary.log 2>&1 &
-

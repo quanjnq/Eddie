@@ -20,7 +20,7 @@ AUTO_ADMIN = "AutoAdmin"
 
 def get_avg_runtimes(query, timeout=120*1000, db_connector=None):
     each_times = []    
-    times = 4
+    times = 1
     for k in range(times): 
         actual_runtimes, plan = db_connector.exec_query(query, timeout=timeout)
         if actual_runtimes is None and k > 0:
@@ -56,7 +56,7 @@ def create_indexes(db_connector, indexes):
         print(statement)
 
 
-def evaluate_indexes_quality(workload, index_config, query2runtime, db_connector, times=5):
+def evaluate_indexes_quality(workload, index_config, query2runtime, db_connector, times=10):
     total_runtime_with_indexes = 0
     regression_query = []
     clear_all_indexes(db_connector)
@@ -64,7 +64,7 @@ def evaluate_indexes_quality(workload, index_config, query2runtime, db_connector
     for i, query in enumerate(workload.queries):
         orig_runtimes = query2runtime[query]
         
-        query_timeout = max(int(orig_runtimes * times), 50)
+        query_timeout = min(int(orig_runtimes * times), 120*1000)
         
         avg_times, plan = get_avg_runtimes(query, query_timeout, db_connector=db_connector)
         

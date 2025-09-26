@@ -75,12 +75,7 @@ def train(model, train_dataloader, val_dataloader, \
         model.train()
         logging.info(f"---- Epoch {epoch + 1} / {epochs} ---- ")
 
-        i = 0
         for batch in train_dataloader:
-            if i == 0:
-                i += 1
-                continue
-            
             features, label = get_batch_data_to_device(batch, device)
             optimizer.zero_grad()
 

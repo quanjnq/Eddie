@@ -30,10 +30,27 @@ def create_hypo_indexes(indexes, db_connector=None):
         db_connector.commit()
 
 
+def add_hypo_plans_to_data_items(data_items, database_name):
+    logging.info(f"using database_name {database_name}")
+    try:
+        db_connector = PostgresDatabaseConnector(database_name, True)
+    except Exception as e:
+        logging.info(f"except: To connect local database {database_name} error; exception: {e}")
+        return False
+    
+    for item in data_items:
+        clear_all_hypo_indexes(db_connector)
+        create_hypo_indexes(item['indexes'], db_connector)
+        with_index_cost, with_index_plan = db_connector.exec_explain_query(item['query'])
+        item['plan_hypo'] = with_index_plan
+        item['cost_hypo'] = with_index_cost
+    
+    return True
+
+
 class Args:
     def __init__(self):
         self.k_folds = 5
-        self.use_virtual_index = True
     pass
 
 
@@ -54,6 +71,10 @@ def main(run_cfg):
     
     data_items, db_stat = data_preprocess(dataset_path, db_stat_path)
         
+    # add plans for hypothetical indexes
+    if not add_hypo_plans_to_data_items(data_items, run_cfg["db_name"]):
+        return
+    
     vary_eval = False
     if run_cfg.get('vary_dataset_path') or run_cfg.get('vary_db_stat_path') or run_cfg.get('vary_schema'):
         vary_eval = True
@@ -63,7 +84,11 @@ def main(run_cfg):
         
         vary_data_items, vary_db_stat = data_preprocess(run_cfg["vary_dataset_path"], run_cfg["vary_db_stat_path"],
                                                       random_change_tbl_col=run_cfg["vary_schema"])
-    
+
+        # add plans for hypothetical indexes
+        if not add_hypo_plans_to_data_items(vary_data_items, run_cfg["vary_db_name"]):
+            return
+        
     database_name = run_cfg["vary_db_name"] if 'vary_db_name' in run_cfg else run_cfg["db_name"]
     logging.info(f"using database_name {database_name}")
     try:
@@ -89,17 +114,44 @@ def main(run_cfg):
 
         val_label_list = []
         val_pred_list = []
+
+        if vary_eval:
+            logging.info("eval new dataset")
+            # eval new dataset
+            val_keys = set([split_key_of(item) for item in val_items])
+            vary_val_items = [item for item in vary_data_items if split_key_of(item) in val_keys]
+        
+            if 'vary_query' in run_id:
+                logging.info("collect vary_query test items")
+                import re
+                def is_new_predicate(odl_sql, new_sql):
+                    if odl_sql == new_sql:
+                        return True
+                    where_token = r"\b[wW][hH][eE][rR][eE]\b"
+                    str_li = re.split(where_token, odl_sql)
+                    for substr in str_li:
+                        if substr not in new_sql:
+                            return False
+                    return True
+                val_texts = set([it["query"].text for it in val_items])
+                test_items = []
+                for item in vary_data_items:
+                    for text in val_texts:
+                        if is_new_predicate(text, item["query"].text):
+                            test_items.append(item)
+                            break
+                val_items = test_items
+            else:
+                val_items = vary_val_items
+
+        logging.info(f"len new val data {len(val_items)}")
+
         for item in val_items:
             val_label_list.append(item['label'])
             
             orig_cost = item['plan_tree']['Total Cost']
-            with_index_cost = item['with_index_plan']['Total Cost']
+            with_index_cost = item['cost_hypo']
             
-            if args.use_virtual_index:
-                clear_all_hypo_indexes(db_connector)
-                create_hypo_indexes(item['indexes'], db_connector)
-                with_index_cost, with_index_plan = db_connector.exec_explain_query(item['query'])
-                
             pred = (orig_cost - with_index_cost) / max(orig_cost, 1e-6)
             pred = max(pred, 0)
             val_pred_list.append(pred)
@@ -115,12 +167,15 @@ def main(run_cfg):
     
 
 if __name__ == '__main__':
-    run_cfg = {
-        'run_id': 'tpcds__base_w_init_idx__postgresql_v1', 
+    run_cfg =  {
+        'run_id': 'tpcds__vary_query__postgresql_v1', 
         'model_name': 'postgresql', 
         'workload_name': 'tpcds', 
         'dataset_path': './datasets/tpcds__base_w_init_idx.pickle', 
         'db_stat_path': './db_stats_data/indexselection_tpcds___10_stats.json', 
-        'db_name': 'indexselection_tpcds___10'
-    }
+        'db_name': 'indexselection_tpcds___10', 
+        'vary_dataset_path': './datasets/tpcds__vary_query.pickle', 
+        'vary_db_stat_path': './db_stats_data/indexselection_tpcds___10_stats.json', 
+        'vary_db_name': 'indexselection_tpcds___10', 
+        'vary_schema': False}
     main(run_cfg)

@@ -2,6 +2,7 @@
 TPCDS = "tpcds"
 TPCH = "tpch"
 IMDB = "imdb"
+REDBENCH = "redbench"
 
 # ext
 ACCIDENTS = "accidents"
@@ -28,6 +29,7 @@ pretrain_ext_workloads = [ACCIDENTS, AIRLINE, BASEBALL, BASKETBALL , CARCINOGENE
 pretrain_workloads_tpcds = [IMDB, TPCH, ] + pretrain_ext_workloads
 pretrain_workloads_tpch = [IMDB, TPCDS, ] + pretrain_ext_workloads
 pretrain_workloads_imdb = [TPCDS, TPCH, ] + pretrain_ext_workloads
+pretrain_workloads_redbench = [TPCDS, TPCH, ] + pretrain_ext_workloads
 
 
 # pre_train all datasets
@@ -88,4 +90,5 @@ pretrain_finetune_config =  {
     TPCDS: {"pretrain_workloads": pretrain_workloads_tpcds, "finetune_dataset_path": "./datasets/tpcds__base_wo_init_idx.pickle", "db_stat_path": db_stats_dict[TPCDS]},
     TPCH: {"pretrain_workloads": pretrain_workloads_tpch, "finetune_dataset_path": "./datasets/tpch__base_wo_init_idx.pickle", "db_stat_path":db_stats_dict[TPCH]},
     IMDB: {"pretrain_workloads": pretrain_workloads_imdb, "finetune_dataset_path": "./datasets/imdb__base_wo_init_idx.pickle", "db_stat_path":db_stats_dict[IMDB]},
+    REDBENCH: {"pretrain_workloads": pretrain_workloads_redbench, "finetune_dataset_path": "./datasets/redbench__base_wo_init_idx.pickle", "db_stat_path":db_stats_dict[IMDB]},
 }

@@ -84,6 +84,14 @@
             "workload_path": "./workload/workload_imdb_plus.pickle",
             "base_exp_id": "base_wo_init_idx",
             "exp_id_list": ["base_wo_init_idx", "base_w_init_idx", "vary_query", "perturb_idx"]
+        },
+        {
+            "activated": true,
+            "workload_name": "redbench",
+            "db_id": "imdb",
+            "workload_path": "./workload/redbench.pickle",
+            "base_exp_id": "base_wo_init_idx",
+            "exp_id_list": ["base_wo_init_idx", "base_w_init_idx",  "perturb_idx", "vary_query", "end2end"]
         }
     ],
     "pretrain": {

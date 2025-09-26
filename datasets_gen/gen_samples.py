@@ -21,9 +21,8 @@ def are_dicts_equal(dict1, dict2):
 
 
 def get_avg_runtimes(query, timeout=180*1000, db_connector=None):
-    # First warm-up, three times averaged
     each_times = []
-    times = 4
+    times = 1
     for k in range(times):
         actual_runtimes, plan = db_connector.exec_query(query, timeout=timeout)
         if actual_runtimes is None and k > 0:
@@ -129,7 +128,7 @@ def run_gen_sample_label(query_index_pairs, breakpoint_path, start_qi=0, db_conn
                         db_connector.exec_only(statement)
                         db_connector.commit()
                     # If the query plan changes, the execution obtains the time and plan after the change
-                    timeout = max(int(orig_runtimes)*2, 5)
+                    timeout = max(int(orig_runtimes)*2, 10*1000)
                     with_index_runtimes, with_index_plan = get_avg_runtimes(query, timeout=timeout, db_connector=db_connector)
                     if with_index_runtimes is None:
                         with_index_runtimes = timeout

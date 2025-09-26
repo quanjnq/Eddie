@@ -38,7 +38,7 @@ def collect_stats_tbl(tbl):
     for col_typ in colname_types:
         col2type[col_typ[0].strip()] = col_typ[1].strip()
 
-    sql = f"select tablename, attname, null_frac, n_distinct, most_common_vals, most_common_freqs, histogram_bounds from pg_stats where schemaname='public' and tablename='{tbl}';"
+    sql = f""
     cursor.execute(sql)
     rows = cursor.fetchall()
 

@@ -73,7 +73,7 @@ def vary_query(query_text, tbl_names, db_connector, db_stat, use_alise):
 
 def gen_vary_query_workload(w_path, stat_path, database_name, workload_name, conn_cfg=None):
     random.seed(0)
-    use_alise = True if workload_name == "imdb" else False
+    use_alise = True if workload_name in ["imdb", "redbench"] else False
     with open(stat_path, "r") as f:
         db_stat = json.load(f)
         
